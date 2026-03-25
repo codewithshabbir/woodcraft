@@ -12,7 +12,27 @@ import {
   Clock,
 } from "lucide-react";
 
-export const sidebarConfig = {
+import { LucideIcon } from "lucide-react";
+
+// ✅ TYPES
+export type SubMenuItem = {
+  title: string;
+  path: string;
+};
+
+export type MenuItem = {
+  title: string;
+  icon: LucideIcon;
+  submenu: SubMenuItem[];
+};
+
+export type SidebarConfigType = {
+  admin: MenuItem[];
+  worker: MenuItem[];
+};
+
+// ✅ CONFIG (TYPED)
+export const sidebarConfig: SidebarConfigType = {
   admin: [
     {
       title: "Dashboard",

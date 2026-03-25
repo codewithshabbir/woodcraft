@@ -1,6 +1,6 @@
 'use client'
 import * as React from "react";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 

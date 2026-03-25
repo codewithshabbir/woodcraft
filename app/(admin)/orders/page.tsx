@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
