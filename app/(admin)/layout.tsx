@@ -1,23 +1,37 @@
+"use client";
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/admin/AppSidebar";
 import TopBar from "@/components/admin/TopBar";
 
-const layout = ({ children }:any) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-  
-      <SidebarProvider>
-        <AppSidebar />
-        <main className="md:w-[calc(100vw-16rem)] w-full">
-          <div className="pt-20 px-6 min-h-[calc(100vh-50px)] pb-10">
-            <TopBar />
+    <SidebarProvider>
+      
+      {/* Sidebar */}
+      <AppSidebar />
+
+      {/* Main Area */}
+      <div className="flex flex-col min-h-screen w-full">
+        
+        {/* TopBar */}
+        <TopBar />
+
+        {/* Content */}
+        <main className="flex-1 pt-16 px-6 bg-muted">
+          <div className="max-w-7xl mx-auto w-full py-6">
             {children}
           </div>
-          <div className="border-t h-12.5 flex justify-center items-center bg-gray-50 dark:bg-background text-sm">
-            © 2025 Muhammad Shabbir. All Rights Reserved.
-          </div>
         </main>
-      </SidebarProvider>
+
+        {/* Footer */}
+        <footer className="h-12 border-t border-border flex items-center justify-center text-sm text-muted-foreground bg-background">
+          © 2025 Muhammad Shabbir. All Rights Reserved.
+        </footer>
+
+      </div>
+    </SidebarProvider>
   );
 };
 
-export default layout;
+export default Layout;

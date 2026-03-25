@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { Store, X, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { sidebarConfig } from "@/lib/sidebarConfig";
 import {
   Collapsible,
@@ -21,22 +22,26 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const AppSidebar = ({ role = "admin" }) => {
   const { toggleSidebar } = useSidebar();
+  const pathname = usePathname();
 
-  // 🔥 FIX: role-based menu
   const menus = sidebarConfig[role] || [];
 
   return (
-    <Sidebar className="z-50">
-      <SidebarHeader className="border-b h-16">
+    <Sidebar className="z-50 border-r border-border bg-card">
+      
+      {/* Header */}
+      <SidebarHeader className="border-b h-16 px-3">
         <div className="flex items-center justify-between">
+          
           <div className="flex items-center gap-2">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground">
-              <Store className="h-5 w-5 text-white" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Store className="h-4 w-4" />
             </span>
-            <span className="text-2xl font-bold uppercase">
+            <span className="text-lg font-semibold">
               Woodcraft
             </span>
           </div>
@@ -48,28 +53,34 @@ const AppSidebar = ({ role = "admin" }) => {
             className="md:hidden"
             onClick={toggleSidebar}
           >
-            <X />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-3">
-        <SidebarMenu>
+      {/* Content */}
+      <SidebarContent className="p-2">
+        <SidebarMenu className="space-y-1">
           {menus.map((menu, index) => {
             const Icon = menu.icon;
+            const hasSubmenu = menu.submenu?.length > 0;
 
             return (
               <Collapsible key={index} className="group/collapsible">
                 <SidebarMenuItem>
+                  
+                  {/* Main Menu */}
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="px-2 py-5 font-semibold">
+                    <SidebarMenuButton
+                      className="h-10 px-3 text-sm font-medium hover:bg-muted transition"
+                    >
                       <div className="flex items-center gap-2 w-full">
                         <Icon className="h-4 w-4" />
                         <span>{menu.title}</span>
 
-                        {menu.submenu?.length > 0 && (
+                        {hasSubmenu && (
                           <ChevronRight
-                            className="ml-auto transition-transform duration-200
+                            className="ml-auto transition-transform duration-200 
                             group-data-[state=open]/collapsible:rotate-90"
                           />
                         )}
@@ -77,18 +88,30 @@ const AppSidebar = ({ role = "admin" }) => {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 
-                  {menu.submenu?.length > 0 && (
+                  {/* Submenu */}
+                  {hasSubmenu && (
                     <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {menu.submenu.map((sub, i) => (
-                          <SidebarMenuSubItem key={i}>
-                            <SidebarMenuSubButton asChild className="px-2 py-5">
-                              <Link href={sub.path}>
-                                <span>{sub.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
+                      <SidebarMenuSub className="ml-6 border-l border-border pl-2">
+                        {menu.submenu.map((sub, i) => {
+                          const isActive = pathname === sub.path;
+
+                          return (
+                            <SidebarMenuSubItem key={i}>
+                              <SidebarMenuSubButton
+                                asChild
+                                className={`h-9 px-3 text-sm transition
+                                  ${isActive 
+                                    ? "bg-primary text-primary-foreground" 
+                                    : "hover:bg-muted"
+                                  }`}
+                              >
+                                <Link href={sub.path}>
+                                  <span>{sub.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   )}

@@ -31,13 +31,8 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      // ❗ confirmPassword backend ko nahi bhejna
       const { confirmPassword, ...payload } = values;
-
       console.log("SIGNUP PAYLOAD:", payload);
-      console.log(payload);
-
-      // await api.signUp(payload);
     } catch (error) {
       console.error(error);
     } finally {
@@ -46,19 +41,22 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="space-y-6">
+      
       {/* Header */}
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold">Create Account</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Sign up to start managing your woodcraft projects
+      <div className="text-center space-y-1">
+        <h1 className="text-2xl font-semibold text-foreground">
+          Create Account
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Start managing your woodcraft projects
         </p>
       </div>
 
       {/* Form */}
       <Form {...form}>
         <form
-          className="space-y-4"
+          className="space-y-5"
           onSubmit={form.handleSubmit(handleSignUpSubmit)}
         >
           <PrimaryFormField
@@ -95,9 +93,10 @@ export default function SignUp() {
             leftIcon={<Lock className="h-4 w-4" />}
           />
 
+          {/* Button */}
           <PrimaryButton
             type="submit"
-            className="w-full"
+            className="w-full h-11 text-base"
             isLoading={loading}
           >
             Create Account
@@ -105,8 +104,11 @@ export default function SignUp() {
         </form>
       </Form>
 
+      {/* Divider */}
+      <div className="h-px bg-border" />
+
       {/* Footer */}
-      <p className="mt-4 text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href={WOODCRAFT_SIGNIN}

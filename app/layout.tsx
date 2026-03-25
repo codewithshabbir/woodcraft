@@ -1,8 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-/* ---------------- FONTS ---------------- */
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,33 +14,27 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-/* ---------------- METADATA ---------------- */
+export const viewport: Viewport = {
+  themeColor: "#7a4a2e",
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://woodcraft.local"), // change later to real domain
+  metadataBase: new URL("http://localhost:3000"),
 
   title: {
     default: "Woodcraft",
     template: "%s | Woodcraft",
   },
 
-  description:
-    "Premium handcrafted wood products built with expert craftsmanship, durability, and timeless design.",
+  description: "Woodcraft management system",
 
   applicationName: "Woodcraft",
 
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#7a4a2e" },
-    { media: "(prefers-color-scheme: dark)", color: "#cfa46a" },
-  ],
-
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
-
-/* ---------------- ROOT LAYOUT ---------------- */
 
 export default function RootLayout({
   children,
@@ -50,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
         className={[
           geistSans.variable,

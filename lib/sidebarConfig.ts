@@ -28,16 +28,15 @@ export const sidebarConfig = {
       submenu: [
         { title: "New Order", path: "/orders/new" },
         { title: "All Orders", path: "/orders" },
-        { title: "Order Tracking", path: "/orders/tracking" },
       ],
     },
     {
       title: "Inventory",
       icon: Boxes,
       submenu: [
-        { title: "Raw Materials", path: "/materials" },
-        { title: "Stock Levels", path: "/inventory/stock" },
-        { title: "Stock History", path: "/inventory/history" },
+        { title: "Raw Materials", path: "/inventory/raw-materials" },
+        { title: "Stock Levels", path: "/inventory/stock-levels" },
+        { title: "Stock History", path: "/inventory/stock-history" },
       ],
     },
     {

@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { Mail, Lock } from "lucide-react";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import Link from "next/link";
@@ -24,22 +25,23 @@ export default function Signin() {
     setLoading(true);
 
     try {
-
       console.log("SIGNIN PAYLOAD:", values);
-
-      // await api.signUp(payload);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
   return (
-    <div>
+    <div className="space-y-6">
+      
       {/* Header */}
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Welcome Back</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <div className="text-center space-y-1">
+        <h1 className="text-2xl font-semibold text-foreground">
+          Welcome Back
+        </h1>
+        <p className="text-sm text-muted-foreground">
           Sign in to continue to Woodcraft
         </p>
       </div>
@@ -47,7 +49,7 @@ export default function Signin() {
       {/* Form */}
       <Form {...form}>
         <form
-          className="space-y-4"
+          className="space-y-5"
           onSubmit={form.handleSubmit(handleSignInSubmit)}
         >
           <PrimaryFormField
@@ -67,8 +69,8 @@ export default function Signin() {
             leftIcon={<Lock className="h-4 w-4" />}
           />
 
-           {/* Forgot password */}
-          <div className="text-right text-sm">
+          {/* Forgot password */}
+          <div className="flex justify-end text-sm">
             <Link
               href="/forgot-password"
               className="text-primary hover:underline"
@@ -77,14 +79,22 @@ export default function Signin() {
             </Link>
           </div>
 
-          <PrimaryButton type="submit" className="w-full" isLoading={loading}>
+          {/* Button */}
+          <PrimaryButton
+            type="submit"
+            className="w-full h-11 text-base"
+            isLoading={loading}
+          >
             Sign In
           </PrimaryButton>
         </form>
       </Form>
 
+      {/* Divider */}
+      <div className="h-px bg-border" />
+
       {/* Footer */}
-      <p className="mt-4 text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground">
         Don’t have an account?{" "}
         <Link
           href="/signup"

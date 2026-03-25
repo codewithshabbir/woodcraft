@@ -30,9 +30,6 @@ export default function ForgotPassword() {
 
     try {
       console.log("FORGOT PASSWORD PAYLOAD:", values);
-
-      // await api.forgotPassword(values);
-
       setSuccess(true);
     } catch (error) {
       console.error("FORGOT PASSWORD ERROR:", error);
@@ -42,24 +39,27 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
+    <div className="space-y-6">
+      
       {/* Header */}
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-semibold">Forgot password</h1>
+        <h1 className="text-2xl font-semibold text-foreground">
+          Forgot password
+        </h1>
         <p className="text-sm text-muted-foreground">
           Enter your email and we’ll send you a reset link
         </p>
       </div>
 
-      {/* Success state */}
+      {/* Success State */}
       {success ? (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+        <div className="rounded-md border border-border bg-muted p-4 text-sm text-muted-foreground text-center">
           If an account exists with this email, a reset link has been sent.
         </div>
       ) : (
         <Form {...form}>
           <form
-            className="space-y-4"
+            className="space-y-5"
             onSubmit={form.handleSubmit(handleSubmit)}
           >
             <PrimaryFormField
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
 
             <PrimaryButton
               type="submit"
-              className="w-full"
+              className="w-full h-11 text-base"
               isLoading={loading}
               disabled={loading}
             >
@@ -81,6 +81,9 @@ export default function ForgotPassword() {
           </form>
         </Form>
       )}
+
+      {/* Divider */}
+      <div className="h-px bg-border" />
 
       {/* Footer */}
       <p className="text-center text-sm text-muted-foreground">
