@@ -115,6 +115,7 @@ const AppSidebar = ({ role = "admin" }: { role?: Role }) => {
               </SidebarMenuSubItem>
             );
           })}
+          
         </SidebarMenuSub>
       </CollapsibleContent>
     )}
