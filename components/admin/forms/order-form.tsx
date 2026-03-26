@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,9 +22,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Pencil } from "lucide-react";
+import { PrimaryButton } from "@/components/shared/PrimaryButton";
 
-// ✅ SCHEMA
+// SCHEMA
 const schema = z.object({
   customerName: z.string().min(2, "Customer name required"),
   deadline: z.string(),
@@ -38,7 +38,7 @@ const schema = z.object({
       materialId: z.string().min(1),
       quantity: z.number().min(1),
       unitPrice: z.number().min(0),
-    })
+    }),
   ),
   notes: z.string().optional(),
 });
@@ -50,10 +50,7 @@ type OrderFormProps = {
   initialData?: Partial<FormValues>;
 };
 
-export default function OrderForm({
-  mode,
-  initialData,
-}: OrderFormProps) {
+export default function OrderForm({ mode, initialData }: OrderFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -89,7 +86,7 @@ export default function OrderForm({
     items?.reduce(
       (acc, item) =>
         acc + (Number(item.quantity) * Number(item.unitPrice) || 0),
-      0
+      0,
     ) || 0;
 
   const onSubmit = async (values: FormValues) => {
@@ -109,11 +106,9 @@ export default function OrderForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* TOP */}
         <div className="grid md:grid-cols-3 gap-6">
-
           {/* CUSTOMER */}
           <Card>
             <CardHeader>
@@ -127,7 +122,11 @@ export default function OrderForm({
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter name" />
+                      <Input
+                        {...field}
+                        className="h-10"
+                        placeholder="Enter your name"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -142,7 +141,6 @@ export default function OrderForm({
               <CardTitle>Status</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-
               <FormField
                 control={form.control}
                 name="status"
@@ -150,7 +148,10 @@ export default function OrderForm({
                   <FormItem>
                     <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <select {...field} className="w-full h-10 border rounded-md px-2">
+                      <select
+                        {...field}
+                        className="w-full h-10 border border-border rounded-md px-2 bg-muted"
+                      >
                         <option value="pending">Pending</option>
                         <option value="in_progress">In Progress</option>
                         <option value="completed">Completed</option>
@@ -167,7 +168,10 @@ export default function OrderForm({
                   <FormItem>
                     <FormLabel>Payment</FormLabel>
                     <FormControl>
-                      <select {...field} className="w-full h-10 border rounded-md px-2">
+                      <select
+                        {...field}
+                        className="w-full h-10 border border-border rounded-md px-2 bg-muted"
+                      >
                         <option value="unpaid">Unpaid</option>
                         <option value="partial">Partial</option>
                         <option value="paid">Paid</option>
@@ -176,7 +180,6 @@ export default function OrderForm({
                   </FormItem>
                 )}
               />
-
             </CardContent>
           </Card>
 
@@ -186,7 +189,6 @@ export default function OrderForm({
               <CardTitle>Timeline</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-
               <FormField
                 control={form.control}
                 name="deadline"
@@ -194,22 +196,20 @@ export default function OrderForm({
                   <FormItem>
                     <FormLabel>Deadline</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} className="h-10"/>
                     </FormControl>
                   </FormItem>
                 )}
               />
 
-              <div className="p-3 bg-muted rounded-lg">
+              <div className="p-3 border border-border bg-muted rounded-lg">
                 <p className="text-xs text-muted-foreground">Total</p>
                 <p className="text-lg font-semibold">
                   Rs. {totalAmount.toLocaleString()}
                 </p>
               </div>
-
             </CardContent>
           </Card>
-
         </div>
 
         {/* ITEMS */}
@@ -220,9 +220,10 @@ export default function OrderForm({
               <CardDescription>Add multiple products</CardDescription>
             </div>
 
-            <Button
+            <PrimaryButton
               type="button"
-              variant="secondary"
+              variant="outline"
+              className="p-5 border-primary hover:border-primary"
               onClick={() =>
                 append({
                   productTitle: "",
@@ -233,33 +234,46 @@ export default function OrderForm({
                 })
               }
             >
-              <Plus className="w-4 h-4 mr-1" />
-              Add
-            </Button>
+              <Plus className="w-4 h-4" />
+              Add Product
+            </PrimaryButton>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="grid md:grid-cols-12 gap-3 p-4 border rounded-lg bg-muted/30"
+                className="grid md:grid-cols-12 gap-3 p-4 border border-border rounded-lg bg-muted/30"
               >
-
                 <div className="md:col-span-3">
-                  <Input {...form.register(`items.${index}.productTitle`)} />
+                  <Input
+                    placeholder="title"
+                    className="h-10"
+                    {...form.register(`items.${index}.productTitle`)}
+                  />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Input {...form.register(`items.${index}.dimensions`)} />
+                  <Input
+                    placeholder="dimension"
+                    className="h-10"
+                    {...form.register(`items.${index}.dimensions`)}
+                  />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Input {...form.register(`items.${index}.materialId`)} />
+                  <Input
+                    placeholder="material id"
+                    className="h-10"
+                    {...form.register(`items.${index}.materialId`)}
+                  />
                 </div>
 
                 <div className="md:col-span-2">
                   <Input
                     type="number"
+                    className="h-10"
+                    placeholder="items quantity"
                     {...form.register(`items.${index}.quantity`, {
                       valueAsNumber: true,
                     })}
@@ -269,6 +283,8 @@ export default function OrderForm({
                 <div className="md:col-span-2">
                   <Input
                     type="number"
+                    className="h-10"
+                    placeholder="items unit price"
                     {...form.register(`items.${index}.unitPrice`, {
                       valueAsNumber: true,
                     })}
@@ -276,15 +292,15 @@ export default function OrderForm({
                 </div>
 
                 <div className="md:col-span-1 flex items-end">
-                  <Button
+                  <PrimaryButton
                     type="button"
                     variant="destructive"
+                    className="px-4 py-5"
                     onClick={() => remove(index)}
                   >
                     <Trash2 className="w-4 h-4" />
-                  </Button>
+                  </PrimaryButton>
                 </div>
-
               </div>
             ))}
           </CardContent>
@@ -297,19 +313,29 @@ export default function OrderForm({
           </CardHeader>
           <CardContent>
             <textarea
+              placeholder="Add special instructions, customer requests, delivery notes, or any important details..."
               {...form.register("notes")}
-              className="w-full min-h-[120px] border rounded-md p-3"
+              className="w-full min-h-[120px] border border-border rounded-md p-3"
             />
           </CardContent>
         </Card>
 
         {/* ACTION */}
         <div className="flex justify-end">
-          <Button type="submit">
-            {mode === "create" ? "Create Order" : "Update Order"}
-          </Button>
+          <PrimaryButton type="submit" className="p-5 flex items-center gap-2">
+            {mode === "create" ? (
+              <>
+                <Plus className="w-4 h-4" />
+                Create Order
+              </>
+            ) : (
+              <>
+                <Pencil className="w-4 h-4" />
+                Update Order
+              </>
+            )}
+          </PrimaryButton>
         </div>
-
       </form>
     </Form>
   );

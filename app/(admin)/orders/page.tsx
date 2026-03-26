@@ -1,10 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Package,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  Eye,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,8 +23,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import DeleteOrderDialog from "@/components/admin/actions/delete-order-dialog";
+import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { cn } from "@/lib/utils";
 
-// ✅ MATCH WITH ERD + FORM
+// ---------------- MOCK DATA ----------------
 const initialOrders = [
   {
     id: "#ORD-001",
@@ -40,11 +51,39 @@ const initialOrders = [
 export default function OrdersPage() {
   const [search, setSearch] = useState("");
 
-  const filteredOrders = initialOrders.filter((order) =>
-    `${order.customerName} ${order.id}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  // ---------------- FILTER ----------------
+  const filteredOrders = useMemo(() => {
+    return initialOrders.filter((order) =>
+      `${order.customerName} ${order.id}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+  }, [search]);
+
+  // ---------------- STATS ----------------
+  const stats = useMemo(() => {
+    const totalOrders = filteredOrders.length;
+
+    const totalRevenue = filteredOrders.reduce(
+      (acc, o) => acc + o.totalAmount,
+      0,
+    );
+
+    const pendingAmount = filteredOrders
+      .filter((o) => o.paymentStatus !== "paid")
+      .reduce((acc, o) => acc + o.totalAmount, 0);
+
+    const completedOrders = filteredOrders.filter(
+      (o) => o.status === "completed",
+    ).length;
+
+    return {
+      totalOrders,
+      totalRevenue,
+      pendingAmount,
+      completedOrders,
+    };
+  }, [filteredOrders]);
 
   return (
     <div className="space-y-8">
@@ -53,32 +92,85 @@ export default function OrdersPage() {
         <div>
           <h1 className="text-3xl font-bold text-primary">Orders</h1>
           <p className="text-sm text-muted-foreground">
-            Manage all customer orders
+            Manage and track all customer orders
           </p>
         </div>
 
         <Link href="/orders/new">
-          <Button>Create Order</Button>
+          <PrimaryButton className="p-5 flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Create Order
+          </PrimaryButton>
         </Link>
       </div>
 
-      {/* SEARCH */}
-      <Card>
+      {/* ---------------- STATS CARDS ---------------- */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          {
+            label: "Total Orders",
+            val: stats.totalOrders,
+            icon: Package,
+            color: "text-primary",
+          },
+          {
+            label: "Revenue",
+            val: `Rs. ${stats.totalRevenue.toLocaleString()}`,
+            icon: DollarSign,
+            color: "text-green-600",
+          },
+          {
+            label: "Pending",
+            val: `Rs. ${stats.pendingAmount.toLocaleString()}`,
+            icon: Clock,
+            color: "text-yellow-600",
+          },
+          {
+            label: "Completed",
+            val: stats.completedOrders,
+            icon: CheckCircle,
+            color: "text-green-600",
+          },
+        ].map((item, i) => (
+          <Card
+            key={i}
+            className="rounded-xl border border-border shadow-sm hover:shadow-md transition"
+          >
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
+                  {item.label}
+                </p>
+                <h2 className={cn("text-2xl font-bold mt-1", item.color)}>
+                  {item.val}
+                </h2>
+              </div>
+              <item.icon className={cn("w-8 h-8 opacity-20", item.color)} />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* ---------------- SEARCH ---------------- */}
+      <Card className="shadow-sm">
         <CardContent className="p-4">
-          <div className="flex items-center w-full max-w-sm rounded-lg border bg-background px-3 h-10 focus-within:ring-2 focus-within:ring-primary">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search orders..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-0 bg-transparent focus-visible:ring-0"
-            />
+          <div className="flex items-center w-full max-w-md">
+            <div className="flex items-center gap-2 w-full rounded-md border border-input bg-muted px-3 h-10 focus-within:ring-2 focus-within:ring-ring">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                type="text"
+                placeholder="Search by customer or order ID..."
+                className="w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* TABLE */}
-      <Card>
+      {/* ---------------- TABLE ---------------- */}
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>All Orders</CardTitle>
           <CardDescription>
@@ -88,16 +180,32 @@ export default function OrdersPage() {
 
         <CardContent className="p-0 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-muted/60 border-b">
-              <tr className="text-left text-muted-foreground">
-                <th className="p-4">Order</th>
-                <th className="p-4">Customer</th>
-                <th className="p-4">Items</th>
-                <th className="p-4">Total</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Payment</th>
-                <th className="p-4">Deadline</th>
-                <th className="p-4 text-right">Actions</th>
+            <thead>
+              <tr className="text-left text-muted-foreground bg-muted/30 border-b">
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Order
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Customer
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Items
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Total
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
+                  Status
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
+                  Payment
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Deadline
+                </th>
+                <th className="p-4 text-right font-bold uppercase text-[11px] tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -106,18 +214,20 @@ export default function OrdersPage() {
                 filteredOrders.map((order, index) => (
                   <tr
                     key={index}
-                    className="border-b last:border-none hover:bg-muted/40 transition"
+                    className="border-b border-border last:border-none hover:bg-muted/40 transition"
                   >
-                    {/* ORDER */}
-                    <td className="p-4 font-semibold text-primary">
+                    {/* ORDER ID */}
+                    <td className="p-4 font-mono text-[12px] text-muted-foreground">
                       {order.id}
                     </td>
 
                     {/* CUSTOMER */}
-                    <td className="p-4">{order.customerName}</td>
+                    <td className="p-4 font-semibold text-primary">
+                      {order.customerName}
+                    </td>
 
                     {/* ITEMS */}
-                    <td className="p-4 text-muted-foreground">
+                    <td className="p-4 text-muted-foreground font-medium">
                       {order.itemsCount} items
                     </td>
 
@@ -127,32 +237,32 @@ export default function OrdersPage() {
                     </td>
 
                     {/* STATUS */}
-                    <td className="p-4">
+                    <td className="p-4 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium
-                        ${
-                          order.status === "completed"
-                            ? "bg-green-100 text-green-700"
-                            : order.status === "in_progress"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter shadow-sm
+              ${
+                order.status === "completed"
+                  ? "bg-green-100 text-green-700"
+                  : order.status === "in_progress"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-gray-100 text-gray-700"
+              }`}
                       >
                         {order.status.replace("_", " ")}
                       </span>
                     </td>
 
                     {/* PAYMENT */}
-                    <td className="p-4">
+                    <td className="p-4 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium
-                        ${
-                          order.paymentStatus === "paid"
-                            ? "bg-primary text-primary-foreground"
-                            : order.paymentStatus === "partial"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter shadow-sm
+              ${
+                order.paymentStatus === "paid"
+                  ? "bg-primary text-primary-foreground"
+                  : order.paymentStatus === "partial"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
                       >
                         {order.paymentStatus}
                       </span>
@@ -166,21 +276,45 @@ export default function OrdersPage() {
                     {/* ACTIONS */}
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-2">
+                        {/* VIEW */}
                         <Link href={`/orders/${order.id.replace("#", "")}`}>
-                          <Button size="sm" variant="ghost">
-                            View
-                          </Button>
+                          <PrimaryButton
+                            size="sm"
+                            className="p-2 h-8 w-8"
+                            title="View Order"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </PrimaryButton>
                         </Link>
 
+                        {/* EDIT */}
                         <Link
                           href={`/orders/${order.id.replace("#", "")}/edit`}
                         >
-                          <Button size="sm" variant="outline">
-                            Edit
-                          </Button>
+                          <PrimaryButton
+                            size="sm"
+                            variant="secondary"
+                            className="p-2 h-8 w-8"
+                            title="Edit Order"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </PrimaryButton>
                         </Link>
 
-                        <DeleteOrderDialog orderId={order.id.replace("#", "")} />
+                        {/* DELETE */}
+                        <DeleteOrderDialog
+                          orderId={order.id.replace("#", "")}
+                          trigger={
+                            <PrimaryButton
+                              size="sm"
+                              variant="destructive"
+                              className="p-2 h-8 w-8"
+                              title="Delete Order"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </PrimaryButton>
+                          }
+                        />
                       </div>
                     </td>
                   </tr>
@@ -189,7 +323,7 @@ export default function OrdersPage() {
                 <tr>
                   <td
                     colSpan={8}
-                    className="p-6 text-center text-muted-foreground"
+                    className="p-12 text-center text-muted-foreground italic"
                   >
                     No orders found
                   </td>

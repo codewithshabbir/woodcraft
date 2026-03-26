@@ -1,9 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Plus } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  Plus,
+  Search,
+  Package,
+  AlertTriangle,
+  CheckCircle,
+  Pencil,
+  Trash2,
+  Layers,
+  Eye,
+} from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -11,170 +21,285 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-// ✅ MATCH YOUR SYSTEM
-const materials = [
+// ---------------- MOCK DATA ----------------
+const initialMaterials = [
   {
     id: "MAT-001",
     name: "Oak Wood",
+    category: "Wood",
     unit: "ft",
     stock: 120,
+    reorderLevel: 20,
     costPerUnit: 500,
-    status: "in_stock",
   },
   {
     id: "MAT-002",
     name: "Pine Wood",
+    category: "Wood",
     unit: "ft",
     stock: 10,
+    reorderLevel: 25,
     costPerUnit: 300,
-    status: "low_stock",
   },
 ];
 
 export default function RawMaterialPage() {
   const [search, setSearch] = useState("");
 
-  const filtered = materials.filter((m) =>
-    m.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // ---------------- FILTER ----------------
+  const filteredMaterials = useMemo(() => {
+    return initialMaterials.filter((m) =>
+      `${m.name} ${m.category} ${m.id}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+  }, [search]);
+
+  // ---------------- STATS ----------------
+  const stats = useMemo(() => {
+    const totalItems = filteredMaterials.length;
+    const lowStockCount = filteredMaterials.filter(
+      (m) => m.stock < m.reorderLevel,
+    ).length;
+    const healthyStockCount = totalItems - lowStockCount;
+    const totalInventoryValue = filteredMaterials.reduce(
+      (acc, m) => acc + m.stock * m.costPerUnit,
+      0,
+    );
+
+    return {
+      totalItems,
+      lowStockCount,
+      healthyStockCount,
+      totalInventoryValue,
+    };
+  }, [filteredMaterials]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-
+    <div className="space-y-8">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-primary">
+          <h1 className="text-3xl font-bold text-primary tracking-tight">
             Raw Materials
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Manage wood, hardware & stock levels
+          <p className="text-sm text-muted-foreground mt-1">
+            Monitor inventory levels, categories, and unit costs
           </p>
         </div>
 
-        <Button>
-          <Plus className="w-4 h-4 mr-1" />
+        <PrimaryButton className="p-5 flex items-center gap-2">
+          <Plus className="w-4 h-4" />
           Add Material
-        </Button>
+        </PrimaryButton>
       </div>
 
-      {/* SUMMARY CARDS */}
-      <div className="grid md:grid-cols-3 gap-4">
-
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Total Materials</p>
-            <p className="text-xl font-semibold">{materials.length}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Low Stock</p>
-            <p className="text-xl font-semibold text-yellow-600">
-              {materials.filter((m) => m.status === "low_stock").length}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">In Stock</p>
-            <p className="text-xl font-semibold text-green-600">
-              {materials.filter((m) => m.status === "in_stock").length}
-            </p>
-          </CardContent>
-        </Card>
-
+      {/* ---------------- STATS CARDS ---------------- */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          {
+            label: "Total Materials",
+            val: stats.totalItems,
+            icon: Layers,
+            color: "text-primary",
+          },
+          {
+            label: "Inventory Value",
+            val: `Rs. ${stats.totalInventoryValue.toLocaleString()}`,
+            icon: Package,
+            color: "text-blue-600",
+          },
+          {
+            label: "Low Stock Items",
+            val: stats.lowStockCount,
+            icon: AlertTriangle,
+            color: "text-red-600",
+          },
+          {
+            label: "Healthy Stock",
+            val: stats.healthyStockCount,
+            icon: CheckCircle,
+            color: "text-green-600",
+          },
+        ].map((item, i) => (
+          <Card
+            key={i}
+            className="rounded-xl border border-border shadow-sm hover:shadow-md transition"
+          >
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
+                  {item.label}
+                </p>
+                <h2 className={cn("text-2xl font-bold mt-1", item.color)}>
+                  {item.val}
+                </h2>
+              </div>
+              <item.icon className={cn("w-8 h-8 opacity-20", item.color)} />
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* SEARCH */}
-      <Card>
+      {/* ---------------- SEARCH ---------------- */}
+      <Card className="shadow-sm">
         <CardContent className="p-4">
-          <div className="flex items-center w-full max-w-sm rounded-lg border bg-background px-3 h-10 focus-within:ring-2 focus-within:ring-primary">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search materials..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-0 bg-transparent focus-visible:ring-0"
-            />
+          <div className="flex items-center w-full max-w-md">
+            <div className="flex items-center gap-2 w-full rounded-md border border-input bg-muted px-3 h-10 focus-within:ring-2 focus-within:ring-ring transition-all">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                type="text"
+                placeholder="Search by name, category or ID..."
+                className="w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* TABLE */}
-      <Card>
+      {/* ---------------- TABLE ---------------- */}
+      <Card className="shadow-sm overflow-hidden">
         <CardHeader>
           <CardTitle>Inventory List</CardTitle>
           <CardDescription>
-            All available raw materials
+            Detailed view of your current stock and reorder points
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-0 overflow-hidden">
+        <CardContent className="p-0">
           <table className="w-full text-sm">
-
-            <thead className="bg-muted/60 border-b">
-              <tr className="text-left text-muted-foreground">
-                <th className="p-4">Material</th>
-                <th className="p-4">Unit</th>
-                <th className="p-4">Stock</th>
-                <th className="p-4">Cost</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-right">Actions</th>
+            <thead>
+              <tr className="text-left text-muted-foreground bg-muted/30 border-b">
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  ID
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Material
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Category
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Stock Level
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
+                  Unit Cost
+                </th>
+                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
+                  Status
+                </th>
+                <th className="p-4 text-right font-bold uppercase text-[11px] tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {filtered.map((m, i) => (
-                <tr
-                  key={i}
-                  className="border-b last:border-none hover:bg-muted/40"
-                >
-                  <td className="p-4 font-semibold">{m.name}</td>
+              {filteredMaterials.length > 0 ? (
+                filteredMaterials.map((m) => {
+                  const isLow = m.stock < m.reorderLevel;
 
-                  <td className="p-4">{m.unit}</td>
-
-                  <td className="p-4">{m.stock}</td>
-
-                  <td className="p-4">
-                    Rs. {m.costPerUnit.toLocaleString()}
-                  </td>
-
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium
-                      ${
-                        m.status === "in_stock"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
+                  return (
+                    <tr
+                      key={m.id}
+                      className="border-b border-border last:border-none hover:bg-muted/40 transition"
                     >
-                      {m.status.replace("_", " ")}
-                    </span>
-                  </td>
+                      <td className="p-4 font-mono text-[12px] text-muted-foreground">
+                        {m.id}
+                      </td>
 
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline">
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="destructive">
-                        Delete
-                      </Button>
-                    </div>
-                  </td>
+                      <td className="p-4 font-semibold text-primary">
+                        {m.name}
+                      </td>
 
+                      <td className="p-4 font-medium text-muted-foreground">
+                        {m.category}
+                      </td>
+
+                      <td className="p-4">
+                        <span
+                          className={cn(
+                            "font-bold",
+                            isLow ? "text-red-600" : "text-foreground",
+                          )}
+                        >
+                          {m.stock} {m.unit}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground ml-1">
+                          (Min: {m.reorderLevel})
+                        </span>
+                      </td>
+
+                      <td className="p-4 font-medium">
+                        Rs. {m.costPerUnit.toLocaleString()}
+                      </td>
+
+                      <td className="p-4 text-center">
+                        <span
+                          className={cn(
+                            "px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter",
+                            isLow
+                              ? "bg-red-100 text-red-700 shadow-sm"
+                              : "bg-green-100 text-green-700 shadow-sm",
+                          )}
+                        >
+                          {isLow ? "Low Stock" : "In Stock"}
+                        </span>
+                      </td>
+
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <Link href="#">
+                            <PrimaryButton
+                              size="sm"
+                              className="p-2 h-8 w-8"
+                              title="View Order"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </PrimaryButton>
+                          </Link>
+                          <PrimaryButton
+                            size="sm"
+                            variant="secondary"
+                            className="p-2 h-8 w-8"
+                            title="Edit Material"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </PrimaryButton>
+
+                          <PrimaryButton
+                            size="sm"
+                            variant="destructive"
+                            className="p-2 h-8 w-8"
+                            title="Delete Material"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </PrimaryButton>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-12 text-center text-muted-foreground italic"
+                  >
+                    No materials found in inventory
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
-
           </table>
         </CardContent>
       </Card>
-
     </div>
   );
 }

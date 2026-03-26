@@ -70,7 +70,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
+  
 /* ---------------- GLOBAL ---------------- */
 body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -96,4 +96,18 @@ body {
   .shadow-medium {
     box-shadow: var(--shadow-medium);
   }
+}
+
+/* ❌ Remove Blur from ALL Shadcn Overlays (Mobile Sidebar, Dialogs, etc.) */
+[data-radix-portal] > div {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(0, 0, 0, 0.4) !important; /* Sirf halka dark, NO blur */
+}
+
+/* ✅ Ensure Sidebar is Solid and Not Transparent */
+[data-sidebar="sidebar"] {
+  background-color: hsl(var(--card)) !important;
+  opacity: 1 !important;
+  box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
