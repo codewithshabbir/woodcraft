@@ -65,16 +65,16 @@ export const sidebarConfig: SidebarConfigType = {
       submenu: [
         { title: "All Suppliers", path: "/suppliers" },
         { title: "Add Supplier", path: "/suppliers/new" },
-        { title: "Purchase Records", path: "/suppliers/purchases" },
+        { title: "Purchase Records", path: "/suppliers/purchase-records" },
       ],
     },
     {
       title: "Production",
       icon: Factory,
       submenu: [
-        { title: "Assign Work", path: "/production/assign" },
-        { title: "Work Progress", path: "/production/progress" },
-        { title: "Completed Work", path: "/production/completed" },
+        { title: "Assign Work", path: "/production/assign-work" },
+        { title: "Work Progress", path: "/production/work-progress" },
+        { title: "Completed Work", path: "/production/completed-work" },
       ],
     },
     {

@@ -24,6 +24,7 @@ import {
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import DeleteOrderDialog from "@/components/admin/actions/delete-order-dialog";
 
 // ---------------- MOCK DATA ----------------
 const initialMaterials = [
@@ -173,131 +174,139 @@ export default function RawMaterialPage() {
         </CardHeader>
 
         <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-muted-foreground bg-muted/30 border-b">
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  ID
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Material
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Category
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Stock Level
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Unit Cost
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
-                  Status
-                </th>
-                <th className="p-4 text-right font-bold uppercase text-[11px] tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+          <div className="w-full overflow-x-auto rounded-md border border-border">
+            <table className="w-full text-sm min-w-[700px]">
+              <thead>
+                <tr className="text-left text-muted-foreground bg-muted/30 border-b">
+                  <th className="p-4 text-[11px] font-bold uppercase">ID</th>
 
-            <tbody>
-              {filteredMaterials.length > 0 ? (
-                filteredMaterials.map((m) => {
-                  const isLow = m.stock < m.reorderLevel;
+                  <th className="p-4 text-[11px] font-bold uppercase">
+                    Material
+                  </th>
 
-                  return (
-                    <tr
-                      key={m.id}
-                      className="border-b border-border last:border-none hover:bg-muted/40 transition"
-                    >
-                      <td className="p-4 font-mono text-[12px] text-muted-foreground">
-                        {m.id}
-                      </td>
+                  <th className="p-4 text-[11px] font-bold uppercase md:table-cell">
+                    Category
+                  </th>
 
-                      <td className="p-4 font-semibold text-primary">
-                        {m.name}
-                      </td>
+                  <th className="p-4 text-[11px] font-bold uppercase">Stock</th>
 
-                      <td className="p-4 font-medium text-muted-foreground">
-                        {m.category}
-                      </td>
+                  <th className="p-4 text-[11px] font-bold uppercase sm:table-cell">
+                    Cost
+                  </th>
 
-                      <td className="p-4">
-                        <span
-                          className={cn(
-                            "font-bold",
-                            isLow ? "text-red-600" : "text-foreground",
-                          )}
-                        >
-                          {m.stock} {m.unit}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground ml-1">
-                          (Min: {m.reorderLevel})
-                        </span>
-                      </td>
+                  <th className="p-4 text-[11px] font-bold uppercase text-center">
+                    Status
+                  </th>
 
-                      <td className="p-4 font-medium">
-                        Rs. {m.costPerUnit.toLocaleString()}
-                      </td>
-
-                      <td className="p-4 text-center">
-                        <span
-                          className={cn(
-                            "px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter",
-                            isLow
-                              ? "bg-red-100 text-red-700 shadow-sm"
-                              : "bg-green-100 text-green-700 shadow-sm",
-                          )}
-                        >
-                          {isLow ? "Low Stock" : "In Stock"}
-                        </span>
-                      </td>
-
-                      <td className="p-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <Link href="#">
-                            <PrimaryButton
-                              size="sm"
-                              className="p-2 h-8 w-8"
-                              title="View Order"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </PrimaryButton>
-                          </Link>
-                          <PrimaryButton
-                            size="sm"
-                            variant="secondary"
-                            className="p-2 h-8 w-8"
-                            title="Edit Material"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </PrimaryButton>
-
-                          <PrimaryButton
-                            size="sm"
-                            variant="destructive"
-                            className="p-2 h-8 w-8"
-                            title="Delete Material"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </PrimaryButton>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="p-12 text-center text-muted-foreground italic"
-                  >
-                    No materials found in inventory
-                  </td>
+                  <th className="p-4 text-[11px] font-bold uppercase text-right">
+                    Actions
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {filteredMaterials.length > 0 ? (
+                  filteredMaterials.map((m) => {
+                    const isLow = m.stock < m.reorderLevel;
+
+                    return (
+                      <tr
+                        key={m.id}
+                        className="border-b border-border hover:bg-muted/40 transition"
+                      >
+                        <td className="p-4 text-xs font-mono text-muted-foreground whitespace-nowrap">
+                          {m.id}
+                        </td>
+
+                        <td className="p-4 font-semibold text-primary whitespace-nowrap">
+                          {m.name}
+                        </td>
+
+                        <td className="p-4 md:table-cell text-muted-foreground whitespace-nowrap">
+                          {m.category}
+                        </td>
+
+                        <td className="p-4 whitespace-nowrap">
+                          <span
+                            className={cn("font-bold", isLow && "text-red-600")}
+                          >
+                            {m.stock} {m.unit}
+                          </span>
+                          <span className="ml-1 text-[10px] text-muted-foreground">
+                            (Min: {m.reorderLevel})
+                          </span>
+                        </td>
+
+                        <td className="p-4 sm:table-cell whitespace-nowrap">
+                          Rs. {m.costPerUnit.toLocaleString()}
+                        </td>
+
+                        <td className="p-4 text-center whitespace-nowrap">
+                          <span
+                            className={cn(
+                              "px-2 py-1 text-[10px] font-bold rounded-full",
+                              isLow
+                                ? "bg-red-100 text-red-700"
+                                : "bg-green-100 text-green-700",
+                            )}
+                          >
+                            {isLow ? "Low" : "OK"}
+                          </span>
+                        </td>
+
+                        <td className="p-4 text-right whitespace-nowrap">
+                          <div className="flex justify-end gap-2">
+                            <Link href={`/inventory/raw-materials/${m.id}`}>
+                              <PrimaryButton
+                                size="sm"
+                                className="p-2 h-8 w-8"
+                                title="View Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </PrimaryButton>
+                            </Link>
+
+                            <Link href={`/inventory/raw-materials/${m.id}/edit`}>
+                              <PrimaryButton
+                                size="sm"
+                                variant="secondary"
+                                className="p-2 h-8 w-8"
+                                title="Edit Material"
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </PrimaryButton>
+                            </Link>
+                            <DeleteOrderDialog
+                              orderId={m.id.replace("#", "")}
+                              trigger={
+                                <PrimaryButton
+                                  size="sm"
+                                  variant="destructive"
+                                  className="p-2 h-8 w-8"
+                                  title="Delete Material"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </PrimaryButton>
+                              }
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="p-12 text-center text-muted-foreground italic"
+                    >
+                      No materials found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
     </div>

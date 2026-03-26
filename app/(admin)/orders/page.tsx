@@ -14,7 +14,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -179,67 +178,65 @@ export default function OrdersPage() {
         </CardHeader>
 
         <CardContent className="p-0 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-muted-foreground bg-muted/30 border-b">
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Order
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Customer
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Items
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Total
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
-                  Status
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider text-center">
-                  Payment
-                </th>
-                <th className="p-4 font-bold uppercase text-[11px] tracking-wider">
-                  Deadline
-                </th>
-                <th className="p-4 text-right font-bold uppercase text-[11px] tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+          <div className="rounded-md border border-border overflow-hidden">
+            <div className="w-full overflow-x-auto">
+              <table className="w-full min-w-225 text-sm">
+                <thead>
+                  <tr className="text-left text-muted-foreground bg-muted/30 border-b">
+                    <th className="p-4 font-bold uppercase text-[11px]">
+                      Order
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px]">
+                      Customer
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px]">
+                      Items
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px]">
+                      Total
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px] text-center">
+                      Status
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px] text-center">
+                      Payment
+                    </th>
+                    <th className="p-4 font-bold uppercase text-[11px]">
+                      Deadline
+                    </th>
+                    <th className="p-4 text-right font-bold uppercase text-[11px]">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
 
-            <tbody>
-              {filteredOrders.length > 0 ? (
-                filteredOrders.map((order, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-border last:border-none hover:bg-muted/40 transition"
-                  >
-                    {/* ORDER ID */}
-                    <td className="p-4 font-mono text-[12px] text-muted-foreground">
-                      {order.id}
-                    </td>
+                <tbody>
+                  {filteredOrders.length > 0 ? (
+                    filteredOrders.map((order, index) => (
+                      <tr
+                        key={index}
+                        className="border-b border-border last:border-none hover:bg-muted/40 transition"
+                      >
+                        <td className="p-4 font-mono text-[12px] text-muted-foreground whitespace-nowrap">
+                          {order.id}
+                        </td>
 
-                    {/* CUSTOMER */}
-                    <td className="p-4 font-semibold text-primary">
-                      {order.customerName}
-                    </td>
+                        <td className="p-4 font-semibold text-primary whitespace-nowrap">
+                          {order.customerName}
+                        </td>
 
-                    {/* ITEMS */}
-                    <td className="p-4 text-muted-foreground font-medium">
-                      {order.itemsCount} items
-                    </td>
+                        <td className="p-4 whitespace-nowrap">
+                          {order.itemsCount} items
+                        </td>
 
-                    {/* TOTAL */}
-                    <td className="p-4 font-medium">
-                      Rs. {order.totalAmount.toLocaleString()}
-                    </td>
+                        <td className="p-4 font-medium whitespace-nowrap">
+                          Rs. {order.totalAmount.toLocaleString()}
+                        </td>
 
-                    {/* STATUS */}
-                    <td className="p-4 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter shadow-sm
+                        {/* STATUS */}
+                        <td className="p-4 text-center whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase
               ${
                 order.status === "completed"
                   ? "bg-green-100 text-green-700"
@@ -247,15 +244,15 @@ export default function OrdersPage() {
                     ? "bg-yellow-100 text-yellow-700"
                     : "bg-gray-100 text-gray-700"
               }`}
-                      >
-                        {order.status.replace("_", " ")}
-                      </span>
-                    </td>
+                          >
+                            {order.status.replace("_", " ")}
+                          </span>
+                        </td>
 
-                    {/* PAYMENT */}
-                    <td className="p-4 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-tighter shadow-sm
+                        {/* PAYMENT */}
+                        <td className="p-4 text-center whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase
               ${
                 order.paymentStatus === "paid"
                   ? "bg-primary text-primary-foreground"
@@ -263,74 +260,67 @@ export default function OrdersPage() {
                     ? "bg-yellow-100 text-yellow-700"
                     : "bg-red-100 text-red-700"
               }`}
-                      >
-                        {order.paymentStatus}
-                      </span>
-                    </td>
-
-                    {/* DEADLINE */}
-                    <td className="p-4 text-muted-foreground">
-                      {order.deadline}
-                    </td>
-
-                    {/* ACTIONS */}
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* VIEW */}
-                        <Link href={`/orders/${order.id.replace("#", "")}`}>
-                          <PrimaryButton
-                            size="sm"
-                            className="p-2 h-8 w-8"
-                            title="View Order"
                           >
-                            <Eye className="w-4 h-4" />
-                          </PrimaryButton>
-                        </Link>
+                            {order.paymentStatus}
+                          </span>
+                        </td>
 
-                        {/* EDIT */}
-                        <Link
-                          href={`/orders/${order.id.replace("#", "")}/edit`}
-                        >
-                          <PrimaryButton
-                            size="sm"
-                            variant="secondary"
-                            className="p-2 h-8 w-8"
-                            title="Edit Order"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </PrimaryButton>
-                        </Link>
+                        {/* DEADLINE */}
+                        <td className="p-4 whitespace-nowrap">
+                          {order.deadline}
+                        </td>
 
-                        {/* DELETE */}
-                        <DeleteOrderDialog
-                          orderId={order.id.replace("#", "")}
-                          trigger={
-                            <PrimaryButton
-                              size="sm"
-                              variant="destructive"
-                              className="p-2 h-8 w-8"
-                              title="Delete Order"
+                        {/* ACTIONS */}
+                        <td className="p-4 text-right whitespace-nowrap">
+                          <div className="flex justify-end gap-2">
+                            <Link href={`/orders/${order.id.replace("#", "")}`}>
+                              <PrimaryButton size="sm" className="p-2 h-8 w-8">
+                                <Eye className="w-4 h-4" />
+                              </PrimaryButton>
+                            </Link>
+
+                            <Link
+                              href={`/orders/${order.id.replace("#", "")}/edit`}
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </PrimaryButton>
-                          }
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="p-12 text-center text-muted-foreground italic"
-                  >
-                    No orders found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                              <PrimaryButton
+                                size="sm"
+                                variant="secondary"
+                                className="p-2 h-8 w-8"
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </PrimaryButton>
+                            </Link>
+
+                            <DeleteOrderDialog
+                              orderId={order.id.replace("#", "")}
+                              trigger={
+                                <PrimaryButton
+                                  size="sm"
+                                  variant="destructive"
+                                  className="p-2 h-8 w-8"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </PrimaryButton>
+                              }
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={8}
+                        className="p-12 text-center text-muted-foreground italic"
+                      >
+                        No orders found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

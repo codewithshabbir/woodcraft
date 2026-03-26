@@ -24,13 +24,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const AppSidebar = ({ role = "admin" }: { role?: keyof typeof sidebarConfig }) => {
+const AppSidebar = ({
+  role = "admin",
+}: {
+  role?: keyof typeof sidebarConfig;
+}) => {
   const { setOpenMobile, isMobile } = useSidebar();
   const pathname = usePathname();
   const menus = sidebarConfig[role];
 
   return (
-    <Sidebar className="z-[100] border-r border-border bg-card shadow-none transition-transform duration-300 ease-in-out">
+    <Sidebar className="z-100 border-r border-border bg-card shadow-none transition-transform duration-300 ease-in-out">
       {/* Header */}
       <SidebarHeader className="border-b border-border h-16 px-4 justify-center bg-card">
         <div className="flex items-center justify-between">
@@ -60,18 +64,23 @@ const AppSidebar = ({ role = "admin" }: { role?: keyof typeof sidebarConfig }) =
           {menus.map((menu: MenuItem) => {
             const Icon = menu.icon;
             const hasSubmenu = menu.submenu && menu.submenu.length > 0;
-            const isParentActive = hasSubmenu && menu.submenu.some((sub) => pathname === sub.path);
+            const isParentActive =
+              hasSubmenu && menu.submenu.some((sub) => pathname === sub.path);
 
             return (
-              <Collapsible key={menu.title} defaultOpen={isParentActive} className="group/collapsible">
+              <Collapsible
+                key={menu.title}
+                defaultOpen={isParentActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       className={cn(
-                        "h-11 px-3 rounded-lg transition-all",
-                        isParentActive 
-                          ? "bg-primary/10 text-primary font-bold" 
-                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                        "h-11 px-3 rounded-lg transition-all cursor-pointer",
+                        isParentActive
+                          ? "bg-primary/10 text-primary font-bold"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground",
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
@@ -93,12 +102,14 @@ const AppSidebar = ({ role = "admin" }: { role?: keyof typeof sidebarConfig }) =
                               <SidebarMenuSubButton asChild isActive={isActive}>
                                 <Link
                                   href={sub.path}
-                                  onClick={() => isMobile && setOpenMobile(false)}
+                                  onClick={() =>
+                                    isMobile && setOpenMobile(false)
+                                  }
                                   className={cn(
                                     "flex h-10 items-center px-4 rounded-md text-[13px] transition-all",
                                     isActive
                                       ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
                                   )}
                                 >
                                   {sub.title}
