@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { ROUTES } from "@/lib/constants/routes";
+import { getRawMaterial } from "@/services/admin/admin.service";
+import { formatNumber } from "@/lib/format";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -17,24 +20,7 @@ type PageProps = {
 export default async function RawMaterialViewPage({ params }: PageProps) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
-
-  const material = {
-    id,
-    name: "Teak Wood",
-    type: "Wood",
-    unit: "Cubic Feet",
-    costPerUnit: 2500,
-    stock: 120,
-    threshold: 50,
-    supplier: {
-      name: "ABC Traders",
-      contact: "+92 300 1234567",
-      location: "Karachi, Pakistan",
-    },
-    createdAt: "12 Mar 2026",
-    updatedAt: "20 Mar 2026",
-    notes: "High quality imported wood for premium furniture. Store in dry conditions.",
-  };
+  const material = await getRawMaterial(id);
 
   const isOutOfStock = material.stock === 0;
   const isLowStock = material.stock <= material.threshold && material.stock > 0;
@@ -63,11 +49,11 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
             <span className="font-mono font-bold text-foreground">
               {material.id}
             </span>{" "}
-            • {material.name}
+            - {material.name}
           </p>
         </div>
 
-        <Link href="/inventory/raw-materials">
+        <Link href={ROUTES.inventory.rawMaterials.root}>
           <PrimaryButton
             variant="outline"
             className="p-5 border-primary hover:border-primary"
@@ -94,10 +80,10 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
               <InfoBlock label="Unit" value={material.unit} />
               <InfoBlock
                 label="Cost"
-                value={`Rs. ${material.costPerUnit.toLocaleString()}`}
+                value={`Rs. ${formatNumber(material.costPerUnit)}`}
               />
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                   Status
                 </p>
@@ -151,13 +137,15 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
                 </span>
               </h2>
 
-              <div className="flex items-center justify-between mt-6 p-3 bg-muted/50 rounded-lg border border-border">
-                <span className="text-sm font-medium text-muted-foreground">
+              <div className="mt-6 rounded-lg border border-border bg-muted/50 p-3">
+                <div className="space-y-2">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Threshold
-                </span>
+                </p>
                 <span className="font-bold text-foreground">
                   {material.threshold}
                 </span>
+              </div>
               </div>
             </CardContent>
           </Card>
@@ -167,7 +155,7 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>Notes</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm text-muted-foreground leading-relaxed">
+            <CardContent className="text-sm leading-relaxed text-muted-foreground">
               {material.notes}
             </CardContent>
           </Card>
@@ -177,14 +165,14 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>History</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-primary/60" />
-                <span>Created: <span className="font-medium text-foreground">{material.createdAt}</span></span>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="mt-0.5 h-4 w-4 text-primary/60" />
+                <InfoBlock label="Created" value={material.createdAt} className="flex-1" />
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-primary/60" />
-                <span>Updated: <span className="font-medium text-foreground">{material.updatedAt}</span></span>
+              <div className="flex items-start gap-3">
+                <Calendar className="mt-0.5 h-4 w-4 text-primary/60" />
+                <InfoBlock label="Updated" value={material.updatedAt} className="flex-1" />
               </div>
             </CardContent>
           </Card>
@@ -209,7 +197,9 @@ function InfoBlock({
       <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
         {label}
       </p>
-      <p className="font-medium text-foreground">{value}</p>
+      <p className="font-medium leading-relaxed text-foreground">{value}</p>
     </div>
   );
 }
+
+

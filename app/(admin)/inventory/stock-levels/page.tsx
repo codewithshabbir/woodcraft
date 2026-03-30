@@ -4,8 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  CheckCircle,
-  Package,
   Pencil,
   Trash2,
   Eye,
@@ -15,7 +13,10 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import ConfirmDeleteDialog from "@/features/admin/components/shared/confirm-delete-dialog";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/lib/constants/routes";
+import { formatNumber } from "@/lib/format";
 
 // MOCK DATA
 const materials = [
@@ -70,13 +71,6 @@ export default function StockLevelPage() {
 
     return { total, low, out };
   }, [processed]);
-
-  const handleDelete = (id: string) => {
-    const confirmDelete = confirm("Delete this material?");
-    if (!confirmDelete) return;
-
-    console.log("Delete:", id);
-  };
 
   return (
     <div className="space-y-8">
@@ -139,7 +133,7 @@ export default function StockLevelPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 type="text"
-                placeholder="Search by customer or order ID..."
+                placeholder="Search by material name, category, or stock status..."
                 className="w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
               />
             </div>
@@ -208,7 +202,7 @@ export default function StockLevelPage() {
                         </td>
 
                         <td className="p-4 whitespace-nowrap">
-                          Rs. {m.costPerUnit.toLocaleString()}
+                          Rs. {formatNumber(m.costPerUnit)}
                         </td>
 
                         <td className="p-4 text-center whitespace-nowrap">
@@ -229,32 +223,38 @@ export default function StockLevelPage() {
                         <td className="p-4 text-right whitespace-nowrap">
                           <div className="flex justify-end gap-2">
                             {/* VIEW */}
-                            <Link href={`/raw-materials/${m.id}`}>
-                              <PrimaryButton size="sm" className="p-2 h-8 w-8">
-                                <Eye className="w-4 h-4" />
+                            <Link href={ROUTES.inventory.rawMaterials.detail(m.id)}>
+                              <PrimaryButton size="sm" className="h-8 w-8 p-2">
+                                <Eye className="h-4 w-4" />
                               </PrimaryButton>
                             </Link>
 
                             {/* EDIT */}
-                            <Link href={`/raw-materials/${m.id}/edit`}>
+                            <Link href={ROUTES.inventory.rawMaterials.edit(m.id)}>
                               <PrimaryButton
                                 size="sm"
                                 variant="secondary"
-                                className="p-2 h-8 w-8"
+                                className="h-8 w-8 p-2"
                               >
-                                <Pencil className="w-3.5 h-3.5" />
+                                <Pencil className="h-4 w-4" />
                               </PrimaryButton>
                             </Link>
 
                             {/* DELETE */}
-                            <PrimaryButton
-                              size="sm"
-                              variant="destructive"
-                              className="p-2 h-8 w-8"
-                              onClick={() => handleDelete(m.id)}
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </PrimaryButton>
+                            <ConfirmDeleteDialog
+                              itemId={m.id}
+                              entityLabel="material"
+                              entityType="rawMaterial"
+                              trigger={
+                                <PrimaryButton
+                                  size="sm"
+                                  variant="destructive"
+                                  className="h-8 w-8 p-2"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </PrimaryButton>
+                              }
+                            />
                           </div>
                         </td>
                       </tr>
@@ -278,3 +278,6 @@ export default function StockLevelPage() {
     </div>
   );
 }
+
+
+

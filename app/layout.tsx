@@ -1,18 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   themeColor: "#7a4a2e",
@@ -43,17 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={[
-          geistSans.variable,
-          geistMono.variable,
-          "antialiased",
-          "bg-background",
-          "text-foreground",
-        ].join(" ")}
-      >
-        {children}
-      </body>
+      <body className="antialiased bg-background text-foreground">{children}</body>
     </html>
   );
 }

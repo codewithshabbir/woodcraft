@@ -1,232 +1,157 @@
 "use client";
 
-import { useMemo } from "react";
 import Link from "next/link";
-import {
-  User,
-  Package,
-  Calendar,
-  Eye,
-  Pencil,
-  Trash2,
-  Layers,
-} from "lucide-react";
+import { useCallback, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { Calendar, Eye, Layers, Package, Pencil, Plus, Trash2 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState, ErrorState, LoadingState } from "@/components/shared/data-state";
+import { StatusMessage } from "@/components/shared/status-message";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ConfirmDeleteDialog from "@/features/admin/components/shared/confirm-delete-dialog";
+import PageHeader from "@/features/admin/components/shared/page-header";
+import StatCard from "@/features/admin/components/shared/stat-card";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { ROUTES } from "@/lib/constants/routes";
 import { cn } from "@/lib/utils";
-
-// MOCK DATA
-const workData = [
-  {
-    id: "AW-001",
-    worker: "Ali",
-    material: "Oak Wood",
-    quantity: 10,
-    deadline: "2026-04-01",
-    status: "Pending",
-  },
-  {
-    id: "AW-002",
-    worker: "Ahmed",
-    material: "Steel Rod",
-    quantity: 5,
-    deadline: "2026-04-02",
-    status: "In Progress",
-  },
-  {
-    id: "AW-003",
-    worker: "Ali",
-    material: "Pine Wood",
-    quantity: 8,
-    deadline: "2026-04-03",
-    status: "Completed",
-  },
-];
+import { listWorkAssignments } from "@/services/admin/admin.service";
 
 export default function AssignWorkListPage() {
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
+  const loadWorkAssignments = useCallback(() => listWorkAssignments(), []);
+  const { data, error, isLoading, reload } = useAsyncResource({ loader: loadWorkAssignments });
+
+  const workAssignments = useMemo(() => data ?? [], [data]);
+
   const stats = useMemo(() => {
-    const total = workData.length;
-    const pending = workData.filter((w) => w.status === "Pending").length;
-    const progress = workData.filter((w) => w.status === "In Progress").length;
+    const total = workAssignments.length;
+    const pending = workAssignments.filter((assignment) => assignment.status === "Pending").length;
+    const progress = workAssignments.filter((assignment) => assignment.status === "In Progress").length;
 
     return { total, pending, progress };
-  }, []);
-
-  const handleDelete = (id: string) => {
-    const confirmDelete = confirm("Delete this task?");
-    if (!confirmDelete) return;
-
-    console.log("Delete:", id);
-  };
+  }, [workAssignments]);
 
   return (
     <div className="space-y-8">
+      <PageHeader
+        title="Assigned Work"
+        description="Manage and track assigned tasks across active production jobs"
+        action={
+          <Link href={ROUTES.production.assignWork.new}>
+            <PrimaryButton className="p-5">
+              <Plus className="h-4 w-4" />
+              Assign Work
+            </PrimaryButton>
+          </Link>
+        }
+      />
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-primary">
-            Assigned Work
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Manage and track assigned tasks
-          </p>
-        </div>
+      {message ? <StatusMessage type="success" message={message} /> : null}
 
-        <Link href="/assign-work/new">
-          <PrimaryButton className="p-5">
-            + Assign Work
-          </PrimaryButton>
-        </Link>
-      </div>
+      {isLoading ? <LoadingState title="Loading assignments..." /> : null}
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {!isLoading && error ? (
+        <ErrorState
+          title="Assignments could not be loaded"
+          description="The production task list is still using the mock service layer. Retry to restore the screen state."
+          actionLabel="Retry"
+          onAction={reload}
+        />
+      ) : null}
 
-        <Card>
-          <CardContent className="p-5 flex justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Total Tasks
-              </p>
-              <h2 className="text-2xl font-bold">{stats.total}</h2>
-            </div>
-            <Layers className="w-6 h-6 opacity-30" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-5 flex justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Pending
-              </p>
-              <h2 className="text-2xl font-bold text-yellow-600">
-                {stats.pending}
-              </h2>
-            </div>
-            <Calendar className="w-6 h-6 text-yellow-600 opacity-30" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-5 flex justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                In Progress
-              </p>
-              <h2 className="text-2xl font-bold text-blue-600">
-                {stats.progress}
-              </h2>
-            </div>
-            <Package className="w-6 h-6 text-blue-600 opacity-30" />
-          </CardContent>
-        </Card>
-
-      </div>
-
-      {/* TABLE */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Tasks</CardTitle>
-        </CardHeader>
-
-        <CardContent className="p-0">
-          <div className="w-full overflow-x-auto rounded-md border border-border">
-            <table className="w-full text-sm min-w-[800px]">
-
-              <thead>
-                <tr className="text-left text-muted-foreground bg-muted/30 border-b">
-                  <th className="p-4 text-[11px] font-bold uppercase">ID</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Worker</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Material</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Qty</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Deadline</th>
-                  <th className="p-4 text-[11px] font-bold uppercase text-center">Status</th>
-                  <th className="p-4 text-[11px] font-bold uppercase text-right">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {workData.map((w) => (
-                  <tr
-                    key={w.id}
-                    className="border-b border-border last:border-none hover:bg-muted/40 transition"
-                  >
-
-                    <td className="p-4 text-xs font-mono text-muted-foreground">
-                      {w.id}
-                    </td>
-
-                    <td className="p-4 font-semibold text-primary">
-                      {w.worker}
-                    </td>
-
-                    <td className="p-4">{w.material}</td>
-
-                    <td className="p-4">{w.quantity}</td>
-
-                    <td className="p-4 text-muted-foreground">
-                      {w.deadline}
-                    </td>
-
-                    <td className="p-4 text-center">
-                      <span
-                        className={cn(
-                          "px-3 py-1 text-[11px] font-bold uppercase rounded-full",
-                          w.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : w.status === "In Progress"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-green-100 text-green-700"
-                        )}
-                      >
-                        {w.status}
-                      </span>
-                    </td>
-
-                    {/* ACTIONS */}
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-2">
-
-                        <Link href={`/assign-work/${w.id}`}>
-                          <PrimaryButton size="sm" className="p-2 h-8 w-8">
-                            <Eye className="w-4 h-4" />
-                          </PrimaryButton>
-                        </Link>
-
-                        <Link href={`/assign-work/${w.id}/edit`}>
-                          <PrimaryButton
-                            size="sm"
-                            variant="secondary"
-                            className="p-2 h-8 w-8"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </PrimaryButton>
-                        </Link>
-
-                        <PrimaryButton
-                          size="sm"
-                          variant="destructive"
-                          className="p-2 h-8 w-8"
-                          onClick={() => handleDelete(w.id)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </PrimaryButton>
-
-                      </div>
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
+      {!isLoading && !error ? (
+        <>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <StatCard label="Total Tasks" value={stats.total} icon={Layers} color="text-primary" />
+            <StatCard label="Pending" value={stats.pending} icon={Calendar} color="text-amber-600" />
+            <StatCard label="In Progress" value={stats.progress} icon={Package} color="text-sky-600" />
           </div>
-        </CardContent>
-      </Card>
 
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>All Tasks</CardTitle>
+              <CardDescription>Production assignments linked to order execution and material usage</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {workAssignments.length === 0 ? (
+                <EmptyState
+                  title="No assigned work found"
+                  description="Assignments will appear here once workers are allocated to active orders."
+                  className="min-h-[220px] rounded-none border-0"
+                />
+              ) : (
+                <div className="w-full overflow-x-auto rounded-md border border-border">
+                  <table className="w-full min-w-[800px] text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/30 text-left text-muted-foreground">
+                        <th className="p-4 text-[11px] font-bold uppercase">ID</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Worker</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Material</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Qty</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Deadline</th>
+                        <th className="p-4 text-center text-[11px] font-bold uppercase">Status</th>
+                        <th className="p-4 text-right text-[11px] font-bold uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {workAssignments.map((assignment) => (
+                        <tr key={assignment.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
+                          <td className="p-4 text-xs font-mono text-muted-foreground">{assignment.id}</td>
+                          <td className="p-4 font-semibold text-primary">{assignment.worker}</td>
+                          <td className="p-4">{assignment.material}</td>
+                          <td className="p-4">{assignment.quantity}</td>
+                          <td className="p-4 text-muted-foreground">{assignment.deadline}</td>
+                          <td className="p-4 text-center">
+                            <span
+                              className={cn(
+                                "rounded-full px-3 py-1 text-[11px] font-bold uppercase",
+                                assignment.status === "Pending"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : assignment.status === "In Progress"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-green-100 text-green-700",
+                              )}
+                            >
+                              {assignment.status}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right whitespace-nowrap">
+                            <div className="flex justify-end gap-2">
+                              <Link href={ROUTES.production.assignWork.detail(assignment.id)}>
+                                <PrimaryButton size="sm" className="h-8 w-8 p-2">
+                                  <Eye className="h-4 w-4" />
+                                </PrimaryButton>
+                              </Link>
+                              <Link href={ROUTES.production.assignWork.edit(assignment.id)}>
+                                <PrimaryButton size="sm" variant="secondary" className="h-8 w-8 p-2">
+                                  <Pencil className="h-4 w-4" />
+                                </PrimaryButton>
+                              </Link>
+                              <ConfirmDeleteDialog
+                                itemId={assignment.id}
+                                entityLabel="task"
+                                entityType="workAssignment"
+                                trigger={
+                                  <PrimaryButton size="sm" variant="destructive" className="h-8 w-8 p-2">
+                                    <Trash2 className="h-4 w-4" />
+                                  </PrimaryButton>
+                                }
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
     </div>
   );
 }
+

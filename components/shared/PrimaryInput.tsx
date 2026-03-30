@@ -29,7 +29,8 @@ export const PrimaryInput = React.forwardRef<
     },
     ref
   ) => {
-    const inputId = id ?? React.useId();
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
     const [visible, setVisible] = React.useState(false);
 
     const isPassword = type === "password" && showPasswordToggle;

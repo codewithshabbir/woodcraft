@@ -108,7 +108,7 @@ export default function StockHistoryPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 type="text"
-                placeholder="Search by customer or order ID..."
+                placeholder="Search by material, movement type, or user..."
                 className="w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
               />
             </div>
@@ -116,7 +116,7 @@ export default function StockHistoryPage() {
         </CardContent>
       </Card>
 
-      {/* TABLE (same style as your orders/raw-materials) */}
+      {/* TABLE */}
       <Card>
         <CardHeader>
           <CardTitle>History Logs</CardTitle>
@@ -192,3 +192,5 @@ export default function StockHistoryPage() {
     </div>
   );
 }
+
+

@@ -6,39 +6,18 @@ import {
   Plus,
   Search,
   Package,
-  Calendar,
-  User,
   Eye,
   Layers,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
-import { cn } from "@/lib/utils";
+import { ROUTES } from "@/lib/constants/routes";
+import { purchaseRecords } from "@/services/admin/admin.data";
+import { formatNumber } from "@/lib/format";
 
 // MOCK DATA
-const records = [
-  {
-    id: "PR-001",
-    material: "Oak Wood",
-    supplier: "ABC Traders",
-    quantity: 50,
-    unit: "ft",
-    price: 500,
-    total: 25000,
-    date: "2026-03-20",
-  },
-  {
-    id: "PR-002",
-    material: "Steel Rod",
-    supplier: "Metal Works",
-    quantity: 30,
-    unit: "kg",
-    price: 700,
-    total: 21000,
-    date: "2026-03-22",
-  },
-];
+const records = purchaseRecords;
 
 export default function PurchaseRecordsPage() {
   const [search, setSearch] = useState("");
@@ -72,10 +51,12 @@ export default function PurchaseRecordsPage() {
           </p>
         </div>
 
-        <PrimaryButton className="flex items-center gap-2 p-5">
-          <Plus className="w-4 h-4" />
-          Add Record
-        </PrimaryButton>
+        <Link href={ROUTES.suppliers.purchaseRecords.new}>
+          <PrimaryButton className="p-5">
+            <Plus className="w-4 h-4" />
+            Add Record
+          </PrimaryButton>
+        </Link>
       </div>
 
       {/* STATS */}
@@ -99,7 +80,7 @@ export default function PurchaseRecordsPage() {
                 Total Spent
               </p>
               <h2 className="text-2xl font-bold text-primary">
-                Rs. {stats.totalSpent.toLocaleString()}
+                Rs. {formatNumber(stats.totalSpent)}
               </h2>
             </div>
             <Package className="w-6 h-6 opacity-30 text-primary" />
@@ -177,7 +158,7 @@ export default function PurchaseRecordsPage() {
                       </td>
 
                       <td className="p-4 font-bold whitespace-nowrap">
-                        Rs. {r.total.toLocaleString()}
+                        Rs. {formatNumber(r.total)}
                       </td>
 
                       <td className="p-4 whitespace-nowrap">
@@ -185,8 +166,8 @@ export default function PurchaseRecordsPage() {
                       </td>
 
                       <td className="p-4 text-right whitespace-nowrap">
-                        <Link href={`/purchase-records/${r.id}`}>
-                          <PrimaryButton size="sm" className="p-2 h-8 w-8">
+                        <Link href={ROUTES.suppliers.purchaseRecords.detail(r.id)}>
+                          <PrimaryButton size="sm" className="h-8 w-8 p-2">
                             <Eye className="w-4 h-4" />
                           </PrimaryButton>
                         </Link>
@@ -214,3 +195,5 @@ export default function PurchaseRecordsPage() {
     </div>
   );
 }
+
+

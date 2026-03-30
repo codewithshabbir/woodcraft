@@ -1,4 +1,4 @@
-import { WOODCRAFT_SIGNIN } from "@/routes/Route";
+import { WOODCRAFT_SIGNIN } from "@/lib/constants/routes";
 import { redirect } from "next/navigation";
 
 export default function Home() {

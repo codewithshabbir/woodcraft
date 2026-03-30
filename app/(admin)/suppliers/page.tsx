@@ -1,239 +1,165 @@
 "use client";
 
-import { useMemo, useState, ChangeEvent } from "react";
 import Link from "next/link";
-import {
-  Plus,
-  Search,
-  Phone,
-  MapPin,
-  User,
-  Eye,
-  Pencil,
-  Trash2,
-  Layers,
-} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Eye, Layers, Pencil, Plus, Trash2 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState, ErrorState, LoadingState } from "@/components/shared/data-state";
+import { StatusMessage } from "@/components/shared/status-message";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
-import { cn } from "@/lib/utils";
-
-// MOCK DATA
-const initialSuppliers = [
-  {
-    id: "SUP-001",
-    name: "ABC Traders",
-    phone: "+92 300 1234567",
-    location: "Karachi",
-    materials: 5,
-  },
-  {
-    id: "SUP-002",
-    name: "Wood Masters",
-    phone: "+92 311 9876543",
-    location: "Lahore",
-    materials: 3,
-  },
-];
-
-type Supplier = typeof initialSuppliers[number];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ConfirmDeleteDialog from "@/features/admin/components/shared/confirm-delete-dialog";
+import PageHeader from "@/features/admin/components/shared/page-header";
+import SearchInput from "@/features/admin/components/shared/search-input";
+import StatCard from "@/features/admin/components/shared/stat-card";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { ROUTES } from "@/lib/constants/routes";
+import { listSuppliers } from "@/services/admin/admin.service";
 
 export default function SuppliersPage() {
   const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
+  const loadSuppliers = useCallback(() => listSuppliers(), []);
+  const { data, error, isLoading, reload } = useAsyncResource({ loader: loadSuppliers });
 
-  // FILTER
-  const filtered = useMemo(() => {
-    return initialSuppliers.filter((s) =>
-      `${s.name} ${s.phone} ${s.location}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
+  const suppliers = useMemo(() => data ?? [], [data]);
+
+  const filteredSuppliers = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    if (!query) {
+      return suppliers;
+    }
+
+    return suppliers.filter((supplier) =>
+      `${supplier.name} ${supplier.phone} ${supplier.location} ${supplier.id}`.toLowerCase().includes(query),
     );
-  }, [search]);
+  }, [suppliers, search]);
 
-  // STATS
   const stats = useMemo(() => {
-    const total = filtered.length;
-    const totalMaterials = filtered.reduce((acc, s) => acc + s.materials, 0);
+    const totalSuppliers = filteredSuppliers.length;
+    const totalMaterials = filteredSuppliers.reduce((sum, supplier) => sum + supplier.materials.length, 0);
 
-    return { total, totalMaterials };
-  }, [filtered]);
-
-  const handleDelete = (id: string) => {
-    const confirmDelete = confirm("Delete this supplier?");
-    if (!confirmDelete) return;
-
-    console.log("Delete:", id);
-  };
+    return { totalSuppliers, totalMaterials };
+  }, [filteredSuppliers]);
 
   return (
     <div className="space-y-8">
+      <PageHeader
+        title="Suppliers"
+        description="Manage supplier contacts, sourcing locations, and covered materials"
+        action={
+          <Link href={ROUTES.suppliers.new}>
+            <PrimaryButton className="p-5">
+              <Plus className="h-4 w-4" />
+              Add Supplier
+            </PrimaryButton>
+          </Link>
+        }
+      />
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-primary">Suppliers</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage all your suppliers
-          </p>
-        </div>
+      {message ? <StatusMessage type="success" message={message} /> : null}
 
-        <PrimaryButton className="flex items-center gap-2 p-5">
-          <Plus className="w-4 h-4" />
-          Add Supplier
-        </PrimaryButton>
-      </div>
+      {isLoading ? <LoadingState title="Loading suppliers..." /> : null}
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="border border-border shadow-sm hover:shadow-md transition">
-          <CardContent className="p-5 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Total Suppliers
-              </p>
-              <h2 className="text-2xl font-bold">{stats.total}</h2>
-            </div>
-            <Layers className="w-6 h-6 opacity-30" />
-          </CardContent>
-        </Card>
+      {!isLoading && error ? (
+        <ErrorState
+          title="Suppliers could not be loaded"
+          description="The supplier registry is still backed by the mock service layer. Retry to restore the screen state."
+          actionLabel="Retry"
+          onAction={reload}
+        />
+      ) : null}
 
-        <Card className="border border-border shadow-sm hover:shadow-md transition">
-          <CardContent className="p-5 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Total Materials
-              </p>
-              <h2 className="text-2xl font-bold text-primary">
-                {stats.totalMaterials}
-              </h2>
-            </div>
-            <Layers className="w-6 h-6 opacity-30 text-primary" />
-          </CardContent>
-        </Card>
-      </div>
+      {!isLoading && !error ? (
+        <>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <StatCard label="Total Suppliers" value={stats.totalSuppliers} icon={Layers} color="text-primary" />
+            <StatCard label="Material Coverage" value={stats.totalMaterials} icon={Layers} color="text-sky-600" />
+          </div>
 
-      {/* ---------------- SEARCH ---------------- */}
-      <Card className="shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex items-center w-full max-w-md">
-            <div className="flex items-center gap-2 w-full rounded-md border border-input bg-muted px-3 h-10 focus-within:ring-2 focus-within:ring-ring">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input
+          <Card className="shadow-sm">
+            <CardContent className="p-4">
+              <SearchInput
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                type="text"
-                placeholder="Search by customer or order ID..."
-                className="w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                onChange={setSearch}
+                placeholder="Search by supplier name, phone, location, or ID..."
+                className="w-full max-w-md"
               />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* TABLE */}
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle>All Suppliers</CardTitle>
-        </CardHeader>
-
-        <CardContent className="p-0">
-          <div className="w-full overflow-x-auto rounded-md border border-border">
-            <table className="w-full text-sm min-w-[800px]">
-
-              <thead>
-                <tr className="text-left text-muted-foreground bg-muted/30 border-b">
-                  <th className="p-4 text-[11px] font-bold uppercase">
-                    Name
-                  </th>
-                  <th className="p-4 text-[11px] font-bold uppercase">
-                    Phone
-                  </th>
-                  <th className="p-4 text-[11px] font-bold uppercase">
-                    Location
-                  </th>
-                  <th className="p-4 text-[11px] font-bold uppercase">
-                    Materials
-                  </th>
-                  <th className="p-4 text-[11px] font-bold uppercase text-right">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filtered.length > 0 ? (
-                  filtered.map((s) => (
-                    <tr
-                      key={s.id}
-                      className="border-b border-border last:border-none hover:bg-muted/40 transition"
-                    >
-                      <td className="p-4 font-semibold text-primary whitespace-nowrap">
-                        {s.name}
-                      </td>
-
-                      <td className="p-4 whitespace-nowrap">
-                        {s.phone}
-                      </td>
-
-                      <td className="p-4 text-muted-foreground whitespace-nowrap">
-                        {s.location}
-                      </td>
-
-                      <td className="p-4 whitespace-nowrap">
-                        {s.materials}
-                      </td>
-
-                      {/* ACTIONS */}
-                      <td className="p-4 text-right whitespace-nowrap">
-                        <div className="flex justify-end gap-2">
-
-                          <Link href={`/suppliers/${s.id}`}>
-                            <PrimaryButton size="sm" className="p-2 h-8 w-8">
-                              <Eye className="w-4 h-4" />
-                            </PrimaryButton>
-                          </Link>
-
-                          <Link href={`/suppliers/${s.id}/edit`}>
-                            <PrimaryButton
-                              size="sm"
-                              variant="secondary"
-                              className="p-2 h-8 w-8"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </PrimaryButton>
-                          </Link>
-
-                          <PrimaryButton
-                            size="sm"
-                            variant="destructive"
-                            className="p-2 h-8 w-8"
-                            onClick={() => handleDelete(s.id)}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </PrimaryButton>
-
-                        </div>
-                      </td>
-
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="p-12 text-center text-muted-foreground italic"
-                    >
-                      No suppliers found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>All Suppliers</CardTitle>
+              <CardDescription>Supplier master data used across purchasing and restocking workflows</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {filteredSuppliers.length === 0 ? (
+                <EmptyState
+                  title="No suppliers match this search"
+                  description="Try a different supplier name, city, or phone number to see matching records."
+                  className="min-h-[220px] rounded-none border-0"
+                />
+              ) : (
+                <div className="w-full overflow-x-auto rounded-md border border-border">
+                  <table className="w-full min-w-[800px] text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/30 text-left text-muted-foreground">
+                        <th className="p-4 text-[11px] font-bold uppercase">Supplier</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Phone</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Location</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Materials</th>
+                        <th className="p-4 text-right text-[11px] font-bold uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredSuppliers.map((supplier) => (
+                        <tr key={supplier.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
+                          <td className="p-4">
+                            <p className="font-semibold text-primary whitespace-nowrap">{supplier.name}</p>
+                            <p className="mt-1 font-mono text-[11px] text-muted-foreground">{supplier.id}</p>
+                          </td>
+                          <td className="p-4 whitespace-nowrap">{supplier.phone}</td>
+                          <td className="p-4 whitespace-nowrap text-muted-foreground">{supplier.location}</td>
+                          <td className="p-4 whitespace-nowrap">{supplier.materials.length}</td>
+                          <td className="p-4 text-right whitespace-nowrap">
+                            <div className="flex justify-end gap-2">
+                              <Link href={ROUTES.suppliers.detail(supplier.id)}>
+                                <PrimaryButton size="sm" className="h-8 w-8 p-2">
+                                  <Eye className="h-4 w-4" />
+                                </PrimaryButton>
+                              </Link>
+                              <Link href={ROUTES.suppliers.edit(supplier.id)}>
+                                <PrimaryButton size="sm" variant="secondary" className="h-8 w-8 p-2">
+                                  <Pencil className="h-4 w-4" />
+                                </PrimaryButton>
+                              </Link>
+                              <ConfirmDeleteDialog
+                                itemId={supplier.id}
+                                entityLabel="supplier"
+                                entityType="supplier"
+                                trigger={
+                                  <PrimaryButton size="sm" variant="destructive" className="h-8 w-8 p-2">
+                                    <Trash2 className="h-4 w-4" />
+                                  </PrimaryButton>
+                                }
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
     </div>
   );
 }
+

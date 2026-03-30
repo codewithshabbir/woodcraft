@@ -1,5 +1,6 @@
-import OrderForm from "@/components/admin/forms/order-form";
+import OrderForm from "@/features/orders/components/order-form";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { ROUTES } from "@/lib/constants/routes";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -10,7 +11,7 @@ export default async function EditOrderPage({
 }) {
   const { id } = await params;
 
-  // 🔥 replace with API
+  // Replace with service-backed data when order endpoints are available.
   type OrderType = {
     customerName: string;
     deadline: string;
@@ -55,7 +56,7 @@ export default async function EditOrderPage({
             Update order details, items, and payment information
           </p>
         </div>
-        <Link href="/orders">
+        <Link href={ROUTES.orders.root}>
           <PrimaryButton
             variant="outline"
             className="p-5 border-primary hover:border-primary"

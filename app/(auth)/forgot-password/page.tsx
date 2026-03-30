@@ -8,31 +8,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { PrimaryFormField } from "@/components/shared/PrimaryFormField";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
-import { WOODCRAFT_SIGNIN } from "@/routes/Route";
-import {
-  forgotPasswordSchema,
-  ForgotPasswordFormValues,
-} from "@/lib/schemas/forgotpassword.schema";
+import { StatusMessage } from "@/components/shared/status-message";
+import { ROUTES } from "@/lib/constants/routes";
+import { forgotPasswordSchema, ForgotPasswordFormValues } from "@/lib/schemas/forgotpassword.schema";
+import { requestPasswordReset } from "@/services/auth/auth.service";
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: {
-      email: "",
-    },
+    defaultValues: { email: "" },
   });
 
   const handleSubmit = async (values: ForgotPasswordFormValues) => {
     setLoading(true);
+    setSubmitError(null);
 
     try {
-      console.log("FORGOT PASSWORD PAYLOAD:", values);
-      setSuccess(true);
+      const result = await requestPasswordReset(values);
+      setSuccessMessage(result.message);
     } catch (error) {
-      console.error("FORGOT PASSWORD ERROR:", error);
+      setSubmitError(error instanceof Error ? error.message : "Reset request failed.");
     } finally {
       setLoading(false);
     }
@@ -40,61 +39,26 @@ export default function ForgotPassword() {
 
   return (
     <div className="space-y-6">
-      
-      {/* Header */}
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-semibold text-foreground">
-          Forgot password
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Enter your email and we’ll send you a reset link
-        </p>
+        <h1 className="text-2xl font-semibold text-foreground">Forgot password</h1>
+        <p className="text-sm text-muted-foreground">Enter your email and we&apos;ll send you a reset link</p>
       </div>
 
-      {/* Success State */}
-      {success ? (
-        <div className="rounded-md border border-border bg-muted p-4 text-sm text-muted-foreground text-center">
-          If an account exists with this email, a reset link has been sent.
-        </div>
-      ) : (
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <PrimaryFormField
-              name="email"
-              label="Email Address"
-              placeholder="Enter your email"
-              control={form.control}
-              leftIcon={<Mail className="h-4 w-4" />}
-            />
+      {successMessage ? <StatusMessage type="success" message={successMessage} /> : null}
+      {submitError ? <StatusMessage type="error" message={submitError} /> : null}
 
-            <PrimaryButton
-              type="submit"
-              className="w-full h-11 text-base"
-              isLoading={loading}
-              disabled={loading}
-            >
-              Send reset link
-            </PrimaryButton>
+      {!successMessage ? (
+        <Form {...form}>
+          <form className="space-y-5" onSubmit={form.handleSubmit(handleSubmit)}>
+            <PrimaryFormField name="email" label="Email Address" placeholder="Enter your email" control={form.control} leftIcon={<Mail className="h-4 w-4" />} />
+            <PrimaryButton type="submit" className="w-full h-11 text-base" isLoading={loading} disabled={loading}>Send reset link</PrimaryButton>
           </form>
         </Form>
-      )}
+      ) : null}
 
-      {/* Divider */}
       <div className="h-px bg-border" />
 
-      {/* Footer */}
-      <p className="text-center text-sm text-muted-foreground">
-        Remember your password?{" "}
-        <Link
-          href={WOODCRAFT_SIGNIN}
-          className="font-medium text-primary hover:underline"
-        >
-          Sign in
-        </Link>
-      </p>
+      <p className="text-center text-sm text-muted-foreground">Remember your password? <Link href={ROUTES.auth.signin} className="font-medium text-primary hover:underline">Sign in</Link></p>
     </div>
   );
 }

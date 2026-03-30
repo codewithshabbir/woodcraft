@@ -1,188 +1,69 @@
 "use client";
 
-import { useMemo } from "react";
 import Link from "next/link";
-import {
-  Clock,
-  User,
-  Package,
-  Calendar,
-  Eye,
-  Layers,
-} from "lucide-react";
+import { useCallback, useMemo } from "react";
+import { Clock, Eye, Layers } from "lucide-react";
 
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { ROUTES } from "@/lib/constants/routes";
 import { cn } from "@/lib/utils";
-
-// MOCK DATA
-const progressData = [
-  {
-    id: "AW-001",
-    worker: "Ali",
-    material: "Oak Wood",
-    quantity: 10,
-    completed: 4,
-    deadline: "2026-04-01",
-  },
-  {
-    id: "AW-002",
-    worker: "Ahmed",
-    material: "Steel Rod",
-    quantity: 5,
-    completed: 3,
-    deadline: "2026-04-02",
-  },
-];
+import { listWorkAssignments } from "@/services/admin/admin.service";
 
 export default function WorkProgressPage() {
+  const loadAssignments = useCallback(() => listWorkAssignments(), []);
+  const { data, error, isLoading, reload } = useAsyncResource({ loader: loadAssignments });
+
+  const progressData = useMemo(() => (data ?? []).filter((task) => task.status !== "Completed"), [data]);
 
   const stats = useMemo(() => {
     const total = progressData.length;
+    const avgProgress = total === 0 ? 0 : progressData.reduce((acc, task) => acc + (task.completed / Math.max(task.quantity, 1)) * 100, 0) / total;
+    return { total, avgProgress: Math.round(avgProgress || 0) };
+  }, [progressData]);
 
-    const avgProgress =
-      progressData.reduce(
-        (acc, w) => acc + (w.completed / w.quantity) * 100,
-        0
-      ) / total;
-
-    return {
-      total,
-      avgProgress: Math.round(avgProgress || 0),
-    };
-  }, []);
+  if (isLoading) return <LoadingState title="Loading work progress..." />;
+  if (error) return <ErrorState title="Work progress could not be loaded" description={error} actionLabel="Retry" onAction={reload} />;
 
   return (
     <div className="space-y-8">
-
-      {/* HEADER */}
       <div>
-        <h1 className="text-3xl font-bold text-primary">
-          Work Progress
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Track ongoing work and progress status
-        </p>
+        <h1 className="text-3xl font-bold text-primary">Work Progress</h1>
+        <p className="text-sm text-muted-foreground">Track ongoing work and progress status</p>
       </div>
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-        <Card>
-          <CardContent className="p-5 flex justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Active Tasks
-              </p>
-              <h2 className="text-2xl font-bold">{stats.total}</h2>
-            </div>
-            <Layers className="w-6 h-6 opacity-30" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-5 flex justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase">
-                Avg Progress
-              </p>
-              <h2 className="text-2xl font-bold text-blue-600">
-                {stats.avgProgress}%
-              </h2>
-            </div>
-            <Clock className="w-6 h-6 text-blue-600 opacity-30" />
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Card><CardContent className="flex justify-between p-5"><div><p className="text-xs uppercase text-muted-foreground">Active Tasks</p><h2 className="text-2xl font-bold">{stats.total}</h2></div><Layers className="h-6 w-6 opacity-30" /></CardContent></Card>
+        <Card><CardContent className="flex justify-between p-5"><div><p className="text-xs uppercase text-muted-foreground">Avg Progress</p><h2 className="text-2xl font-bold text-blue-600">{stats.avgProgress}%</h2></div><Clock className="h-6 w-6 text-blue-600 opacity-30" /></CardContent></Card>
       </div>
 
-      {/* TABLE */}
       <Card>
-        <CardHeader>
-          <CardTitle>Ongoing Work</CardTitle>
-        </CardHeader>
-
+        <CardHeader><CardTitle>Ongoing Work</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="w-full overflow-x-auto rounded-md border border-border">
-            <table className="w-full text-sm min-w-[900px]">
-
-              <thead>
-                <tr className="text-left text-muted-foreground bg-muted/30 border-b">
-                  <th className="p-4 text-[11px] font-bold uppercase">ID</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Worker</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Material</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Progress</th>
-                  <th className="p-4 text-[11px] font-bold uppercase">Deadline</th>
-                  <th className="p-4 text-[11px] font-bold uppercase text-right">Action</th>
-                </tr>
-              </thead>
-
+            <table className="w-full min-w-[900px] text-sm">
+              <thead><tr className="border-b bg-muted/30 text-left text-muted-foreground"><th className="p-4 text-[11px] font-bold uppercase">ID</th><th className="p-4 text-[11px] font-bold uppercase">Worker</th><th className="p-4 text-[11px] font-bold uppercase">Material</th><th className="p-4 text-[11px] font-bold uppercase">Progress</th><th className="p-4 text-[11px] font-bold uppercase">Deadline</th><th className="p-4 text-right text-[11px] font-bold uppercase">Action</th></tr></thead>
               <tbody>
-                {progressData.map((w) => {
-                  const percent = Math.round(
-                    (w.completed / w.quantity) * 100
-                  );
-
+                {progressData.map((task) => {
+                  const percent = Math.round((task.completed / Math.max(task.quantity, 1)) * 100);
                   return (
-                    <tr
-                      key={w.id}
-                      className="border-b border-border last:border-none hover:bg-muted/40 transition"
-                    >
-
-                      <td className="p-4 text-xs font-mono text-muted-foreground">
-                        {w.id}
-                      </td>
-
-                      <td className="p-4 font-semibold text-primary">
-                        {w.worker}
-                      </td>
-
-                      <td className="p-4">{w.material}</td>
-
-                      {/* PROGRESS BAR */}
-                      <td className="p-4 w-[250px]">
-                        <div className="space-y-2">
-                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={cn(
-                                "h-full transition-all",
-                                percent < 40
-                                  ? "bg-red-500"
-                                  : percent < 80
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500"
-                              )}
-                              style={{ width: `${percent}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {w.completed} / {w.quantity} ({percent}%)
-                          </p>
-                        </div>
-                      </td>
-
-                      <td className="p-4 text-muted-foreground">
-                        {w.deadline}
-                      </td>
-
-                      <td className="p-4 text-right">
-                        <Link href={`/assign-work/${w.id}`}>
-                          <PrimaryButton size="sm" className="p-2 h-8 w-8">
-                            <Eye className="w-4 h-4" />
-                          </PrimaryButton>
-                        </Link>
-                      </td>
-
+                    <tr key={task.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
+                      <td className="p-4 font-mono text-xs text-muted-foreground">{task.id}</td>
+                      <td className="p-4 font-semibold text-primary">{task.worker}</td>
+                      <td className="p-4">{task.material}</td>
+                      <td className="w-[250px] p-4"><div className="space-y-2"><div className="h-2 w-full overflow-hidden rounded-full bg-muted"><div className={cn("h-full transition-all", percent < 40 ? "bg-red-500" : percent < 80 ? "bg-yellow-500" : "bg-green-500")} style={{ width: `${percent}%` }} /></div><p className="text-xs text-muted-foreground">{task.completed} / {task.quantity} ({percent}%)</p></div></td>
+                      <td className="p-4 text-muted-foreground">{task.deadline}</td>
+                      <td className="p-4 text-right"><Link href={ROUTES.production.assignWork.detail(task.id)}><PrimaryButton size="sm" className="h-8 w-8 p-2"><Eye className="h-4 w-4" /></PrimaryButton></Link></td>
                     </tr>
                   );
                 })}
               </tbody>
-
             </table>
           </div>
         </CardContent>
       </Card>
-
     </div>
   );
 }

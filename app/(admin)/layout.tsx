@@ -1,8 +1,8 @@
 "use client";
 
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/admin/AppSidebar";
-import TopBar from "@/components/admin/TopBar";
+import AppSidebar from "@/features/admin/components/AppSidebar";
+import TopBar from "@/features/admin/components/TopBar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

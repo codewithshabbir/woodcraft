@@ -13,6 +13,8 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { ROUTES } from "@/lib/constants/routes";
+import { formatNumber } from "@/lib/format";
 
 export default function OrderTrackingPage({
   params,
@@ -50,10 +52,10 @@ export default function OrderTrackingPage({
             <span className="font-mono font-bold text-foreground">
               {order.id}
             </span>{" "}
-            • {order.customerName}
+            - {order.customerName}
           </p>
         </div>
-        <Link href="/orders">
+        <Link href={ROUTES.orders.root}>
           <PrimaryButton
             variant="outline"
             className="p-5 border-primary hover:border-primary"
@@ -68,19 +70,19 @@ export default function OrderTrackingPage({
         {[
           {
             label: "Total Valuation",
-            val: `Rs. ${order.totalAmount.toLocaleString()}`,
+            val: `Rs. ${formatNumber(order.totalAmount)}`,
             icon: Package,
             color: "text-primary",
           },
           {
             label: "Amount Paid",
-            val: `Rs. ${order.paidAmount.toLocaleString()}`,
+            val: `Rs. ${formatNumber(order.paidAmount)}`,
             icon: DollarSign,
             color: "text-green-600",
           },
           {
             label: "Remaining",
-            val: `Rs. ${remaining.toLocaleString()}`,
+            val: `Rs. ${formatNumber(remaining)}`,
             icon: Clock,
             color: "text-red-600",
           },
