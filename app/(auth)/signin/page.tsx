@@ -1,21 +1,20 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { StatusMessage } from "@/components/shared/status-message";
 import Link from "next/link";
 import { Form } from "@/components/ui/form";
 import { PrimaryFormField } from "@/components/shared/PrimaryFormField";
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SignInFormValues, signInSchema } from "@/lib/schemas/signin.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/lib/constants/routes";
 import { signIn } from "@/services/auth/auth.service";
-import { Suspense } from "react";
 
-export default function Signin() {
+function SignInPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -43,7 +42,7 @@ export default function Signin() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-1">
+      <div className="space-y-1 text-center">
         <h1 className="text-2xl font-semibold text-foreground">Welcome Back</h1>
         <p className="text-sm text-muted-foreground">Sign in to continue to Woodcraft</p>
       </div>
@@ -60,7 +59,7 @@ export default function Signin() {
             <Link href={ROUTES.auth.forgotPassword} className="text-primary hover:underline">Forgot password?</Link>
           </div>
 
-          <PrimaryButton type="submit" className="w-full h-11 text-base" isLoading={loading}>Sign In</PrimaryButton>
+          <PrimaryButton type="submit" className="h-11 w-full text-base" isLoading={loading}>Sign In</PrimaryButton>
         </form>
       </Form>
 
@@ -69,4 +68,12 @@ export default function Signin() {
       <p className="text-center text-sm text-muted-foreground">Don&apos;t have an account? <Link href={ROUTES.auth.signup} className="font-medium text-primary hover:underline">Create one</Link></p>
     </div>
   );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInPageContent />
+    </Suspense>
+  )
 }
