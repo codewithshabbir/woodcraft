@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, Layers, Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -17,7 +17,7 @@ import { useAsyncResource } from "@/hooks/use-async-resource";
 import { ROUTES } from "@/lib/constants/routes";
 import { listSuppliers } from "@/services/admin/admin.service";
 
-export default function SuppliersPage() {
+function SuppliersPageContent() {
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -163,3 +163,12 @@ export default function SuppliersPage() {
   );
 }
 
+
+
+export default function SuppliersPage() {
+  return (
+    <Suspense fallback={null}>
+      <SuppliersPageContent />
+    </Suspense>
+  )
+}

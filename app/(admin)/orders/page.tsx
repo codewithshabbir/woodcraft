@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   CheckCircle,
@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import { listOrders } from "@/services/admin/admin.service";
 import { formatNumber } from "@/lib/format";
 
-export default function OrdersPage() {
+function OrdersPageContent() {
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -222,4 +222,12 @@ export default function OrdersPage() {
       ) : null}
     </div>
   );
+}
+
+export default function OrdersPage() {
+  return (
+    <Suspense fallback={null}>
+      <OrdersPageContent />
+    </Suspense>
+  )
 }

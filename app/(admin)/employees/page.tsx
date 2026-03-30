@@ -16,8 +16,9 @@ import EmployeesTable from "@/features/employees/components/employees-table";
 import { useAsyncResource } from "@/hooks/use-async-resource";
 import { ROUTES } from "@/lib/constants/routes";
 import { listEmployees } from "@/services/admin/admin.service";
+import { Suspense } from "react";
 
-export default function EmployeesPage() {
+function EmployeesPageContent() {
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -49,4 +50,13 @@ export default function EmployeesPage() {
       {!isLoading && !error ? <><div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Total Employees" value={stats.totalEmployees} icon={Users} color="text-primary" /><StatCard label="Active Employees" value={stats.activeEmployees} icon={Star} color="text-emerald-600" /><StatCard label="Assigned Jobs" value={stats.totalActiveJobs} icon={Briefcase} color="text-sky-600" /><StatCard label="Avg Efficiency" value={`${stats.avgEfficiency}%`} icon={TimerReset} color="text-amber-600" /></div><Card className="shadow-sm"><CardContent className="p-4"><SearchInput value={search} onChange={setSearch} placeholder="Search by employee name, role, or ID..." className="w-full max-w-md" /></CardContent></Card><Card className="shadow-sm"><CardHeader><CardTitle>Team Directory</CardTitle><CardDescription>Workforce overview with live utilization and current availability</CardDescription></CardHeader><CardContent className="p-0">{filteredEmployees.length === 0 ? <EmptyState title="No employees match this search" description="Try a different employee name, role, or ID to see results here." className="min-h-[180px] rounded-none border-0" /> : <EmployeesTable employees={filteredEmployees} onDeleteComplete={reload} />}</CardContent></Card></> : null}
     </div>
   );
+}
+
+
+export default function EmployeesPage() {
+  return (
+    <Suspense fallback={null}>
+      <EmployeesPageContent />
+    </Suspense>
+  )
 }

@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/lib/constants/routes";
 import { signIn } from "@/services/auth/auth.service";
+import { Suspense } from "react";
 
 export default function Signin() {
   const router = useRouter();

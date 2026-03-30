@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo } from "react";
+import { Suspense, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, Eye, Layers, Package, Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -17,7 +17,7 @@ import { ROUTES } from "@/lib/constants/routes";
 import { cn } from "@/lib/utils";
 import { listWorkAssignments } from "@/services/admin/admin.service";
 
-export default function AssignWorkListPage() {
+function AssignWorkListPageContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
   const loadWorkAssignments = useCallback(() => listWorkAssignments(), []);
@@ -155,3 +155,12 @@ export default function AssignWorkListPage() {
   );
 }
 
+
+
+export default function AssignWorkListPage() {
+  return (
+    <Suspense fallback={null}>
+      <AssignWorkListPageContent />
+    </Suspense>
+  )
+}

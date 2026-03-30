@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import { listRawMaterials } from "@/services/admin/admin.service";
 import { formatNumber } from "@/lib/format";
 
-export default function RawMaterialPage() {
+function RawMaterialPageContent() {
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -203,4 +203,13 @@ export default function RawMaterialPage() {
       ) : null}
     </div>
   );
+}
+
+
+export default function RawMaterialPage() {
+  return (
+    <Suspense fallback={null}>
+      <RawMaterialPageContent />
+    </Suspense>
+  )
 }

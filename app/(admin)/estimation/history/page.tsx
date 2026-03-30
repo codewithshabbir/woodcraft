@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calculator, FileClock, Wallet } from "lucide-react";
 
@@ -15,7 +15,7 @@ import { useAsyncResource } from "@/hooks/use-async-resource";
 import { listEstimates } from "@/services/admin/admin.service";
 import { formatNumber } from "@/lib/format";
 
-export default function EstimationHistoryPage() {
+function EstimationHistoryPageContent() {
   const [search, setSearch] = useState("");
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
@@ -111,3 +111,12 @@ export default function EstimationHistoryPage() {
   );
 }
 
+
+
+export default function EstimationHistoryPage() {
+  return (
+    <Suspense fallback={null}>
+      <EstimationHistoryPageContent />
+    </Suspense>
+  )
+}
