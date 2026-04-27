@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/lib/auth";
 
 const adminPrefixes = [
   "/dashboard",
@@ -37,15 +37,14 @@ const authPrefixes = ["/login", "/signin"];
 
 export async function middleware(request) {
   const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
-  let token = null;
+  let session = null;
   try {
-    token = await getToken({
-      req: request,
-      secret: authSecret,
-    });
+    // Use NextAuth v5 session extraction so Auth.js cookie names work on Vercel/Edge.
+    session = await auth(request);
   } catch {
-    token = null;
+    session = null;
   }
+  const token = session?.user ? { role: session.user.role, email: session.user.email } : null;
   const { pathname, search } = request.nextUrl;
   const isApiRoute = pathname.startsWith("/api/");
 
@@ -53,10 +52,8 @@ export async function middleware(request) {
   const isAuthRoute = authPrefixes.some((prefix) => pathname.startsWith(prefix));
   const isEmployeeAllowedRoute = employeeAllowedPrefixes.some((prefix) => pathname.startsWith(prefix));
   const isEmployeeOrderApiRoute = /^\/api\/orders(\/[^/]+)?$/.test(pathname);
-  const isEmployeeForbiddenOrderPage = token?.role === "employee" && (
-    pathname === "/orders/new" ||
-    /^\/orders\/[^/]+\/edit$/.test(pathname)
-  );
+  const isEmployeeForbiddenOrderPage =
+    token?.role === "employee" && (pathname === "/orders/new" || /^\/orders\/[^/]+\/edit$/.test(pathname));
 
   if (isAdminRoute && !token) {
     if (isApiRoute) {
