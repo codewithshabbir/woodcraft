@@ -1,4 +1,4 @@
-import OrderForm from "@/features/orders/components/order-form";
+import OrderForm from "@/features/orders/order-form";
 
 export default function NewOrderPage() {
   return (
@@ -7,7 +7,7 @@ export default function NewOrderPage() {
         <div>
           <h1 className="text-3xl font-bold text-primary">Create New Order</h1>
           <p className="text-sm text-muted-foreground">
-            Add customer details and products to generate a new order
+            Add customer details and materials to generate a new order
           </p>
         </div>
       </div>

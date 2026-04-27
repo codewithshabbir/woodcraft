@@ -1,33 +1,29 @@
-const MOCK_DELAY_MS = 180
+import { signIn as nextAuthSignIn } from "next-auth/react";
 
-const delay = async (ms = MOCK_DELAY_MS) => new Promise((resolve) => setTimeout(resolve, ms))
+import type { AuthMessageResult, PasswordResetRequestValues, SignInValues } from "@/types/api/auth";
 
-export async function signIn(values: { email: string; password: string }) {
-  await delay()
+type CredentialsSignInResponse = {
+  error?: string | null;
+};
 
-  if (!values.email || !values.password) {
-    throw new Error("Email and password are required.")
+export const signIn = async (values: SignInValues): Promise<AuthMessageResult> => {
+  const result = (await nextAuthSignIn("credentials", {
+    email: values.email,
+    password: values.password,
+    redirect: false,
+  })) as CredentialsSignInResponse | undefined;
+
+  if (!result || result.error) {
+    throw new Error("Invalid email or password.");
   }
 
-  return { message: "Signed in successfully." }
-}
+  return { message: "Signed in successfully." };
+};
 
-export async function signUp(values: { name: string; email: string; password: string }) {
-  await delay()
-
-  if (!values.name || !values.email || !values.password) {
-    throw new Error("All signup fields are required.")
-  }
-
-  return { message: "Account created successfully. You can sign in now." }
-}
-
-export async function requestPasswordReset(values: { email: string }) {
-  await delay()
-
+export const requestPasswordReset = async (values: PasswordResetRequestValues): Promise<AuthMessageResult> => {
   if (!values.email) {
-    throw new Error("Email is required.")
+    throw new Error("Email is required.");
   }
 
-  return { message: "If an account exists with this email, a reset link has been sent." }
-}
+  return { message: "Password reset flow is not configured yet. Contact an administrator." };
+};

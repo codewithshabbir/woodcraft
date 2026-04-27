@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers";
 import { Button } from "@/components/ui/button";
-import { PrimaryButtonProps } from "@/types/shared";
+import { PrimaryButtonProps } from "@/types/ui/button";
 
 export function PrimaryButton({
   children,

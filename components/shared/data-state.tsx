@@ -1,7 +1,7 @@
 import { AlertCircle, Inbox, Loader2 } from "lucide-react"
 
 import { PrimaryButton } from "@/components/shared/PrimaryButton"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/helpers"
 
 type DataStateProps = {
   title: string

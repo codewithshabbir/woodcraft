@@ -1,4 +1,4 @@
-import { LayoutProps } from "@/types/auth";
+import { LayoutProps } from "@/types/ui/layout";
 
 export default function AuthLayout({ children }: LayoutProps) {
   return (

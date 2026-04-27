@@ -30,12 +30,10 @@ export default function EditEmployeePage({ params }: { params: Promise<{ id: str
     try {
       const result = await updateEmployee(id, {
         name: String(formData.get("name") ?? ""),
-        role: String(formData.get("role") ?? ""),
-        phone: String(formData.get("phone") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+        employeeType: String(formData.get("employeeType") ?? ""),
         hourlyRate: Number(formData.get("hourlyRate") ?? 0),
-        weeklyHours: Number(formData.get("weeklyHours") ?? 0),
-        status: String(formData.get("status") ?? "Active") as "Active" | "On Leave" | "Inactive",
-        notes: String(formData.get("notes") ?? ""),
       });
 
       router.push(`${ROUTES.employees.root}?message=${encodeURIComponent(result.message)}`);
@@ -56,7 +54,39 @@ export default function EditEmployeePage({ params }: { params: Promise<{ id: str
       <form className="space-y-6" onSubmit={handleSubmit}>
         {error ? <StatusMessage type="error" message={error} /> : null}
         {submitError ? <StatusMessage type="error" message={submitError} /> : null}
-        <Card className="shadow-sm"><CardHeader><CardTitle>Employee Information</CardTitle></CardHeader><CardContent className="grid gap-6 md:grid-cols-2"><Field label="Full Name"><Input name="name" className="h-10" defaultValue={employee.name} /></Field><Field label="Role"><Input name="role" className="h-10" defaultValue={employee.role} /></Field><Field label="Phone"><Input name="phone" className="h-10" defaultValue={employee.phone} /></Field><Field label="Hourly Rate"><Input name="hourlyRate" type="number" className="h-10" defaultValue={employee.hourlyRate ?? 950} /></Field><Field label="Weekly Hours"><Input name="weeklyHours" type="number" className="h-10" defaultValue={employee.weeklyHours} /></Field><Field label="Status"><select name="status" defaultValue={employee.status} className="h-10 w-full rounded-md border border-border bg-muted px-3 text-sm outline-none"><option value="Active">Active</option><option value="On Leave">On Leave</option><option value="Inactive">Inactive</option></select></Field></CardContent></Card><Card className="shadow-sm"><CardHeader><CardTitle>Notes</CardTitle></CardHeader><CardContent><textarea name="notes" className="min-h-[120px] w-full rounded-md border border-border p-3 text-sm outline-none" defaultValue={employee.notes ?? ""} /></CardContent></Card><div className="flex justify-end gap-3"><Link href={ROUTES.employees.detail(id)}><PrimaryButton variant="outline" className="border-primary hover:border-primary">Cancel</PrimaryButton></Link><PrimaryButton className="p-5" disabled={isSubmitting}><Save className="h-4 w-4" />{isSubmitting ? "Saving..." : "Save Changes"}</PrimaryButton></div></form>
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>Employee Information</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-6 md:grid-cols-2">
+            <Field label="Full Name">
+              <Input name="name" className="h-10" defaultValue={employee.name} required />
+            </Field>
+            <Field label="Email">
+              <Input name="email" className="h-10" defaultValue={employee.email ?? ""} required />
+            </Field>
+            <Field label="Employee Type (Skill Type)">
+              <Input name="employeeType" className="h-10" defaultValue={employee.employeeType ?? ""} required />
+            </Field>
+            <Field label="Hourly Rate">
+              <Input name="hourlyRate" type="number" className="h-10" defaultValue={employee.hourlyRate ?? 0} min={0} required />
+            </Field>
+            <Field label="Reset Password (optional)">
+              <Input name="password" type="password" className="h-10" placeholder="Leave blank to keep current" />
+            </Field>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end gap-3">
+          <Link href={ROUTES.employees.detail(id)}>
+            <PrimaryButton variant="outline" className="border-primary hover:border-primary">Cancel</PrimaryButton>
+          </Link>
+          <PrimaryButton className="p-5" disabled={isSubmitting}>
+            <Save className="h-4 w-4" />
+            {isSubmitting ? "Saving..." : "Save Changes"}
+          </PrimaryButton>
+        </div>
+      </form>
     </div>
   );
 }

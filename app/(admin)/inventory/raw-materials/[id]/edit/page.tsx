@@ -22,15 +22,10 @@ type PageProps = {
 
 type MaterialForm = {
   name: string;
-  type: string;
   unit: string;
-  costPerUnit: number;
-  stock: number;
+  pricePerUnit: number;
+  quantity: number;
   threshold: number;
-  supplierName: string;
-  supplierContact: string;
-  supplierLocation: string;
-  notes: string;
 };
 
 export default function EditMaterialPage({ params }: PageProps) {
@@ -48,17 +43,13 @@ export default function EditMaterialPage({ params }: PageProps) {
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData({
       name: material.name,
-      type: material.type,
       unit: material.unit,
-      costPerUnit: material.costPerUnit,
-      stock: material.stock,
+      pricePerUnit: material.pricePerUnit,
+      quantity: material.quantity,
       threshold: material.threshold,
-      supplierName: material.supplier.name,
-      supplierContact: material.supplier.contact,
-      supplierLocation: material.supplier.location,
-      notes: material.notes ?? "",
     });
   }, [material]);
 
@@ -67,7 +58,7 @@ export default function EditMaterialPage({ params }: PageProps) {
 
     setFormData((prev) => prev ? ({
       ...prev,
-      [name]: name === "costPerUnit" || name === "stock" || name === "threshold" ? Number(value) : value,
+      [name]: name === "pricePerUnit" || name === "quantity" || name === "threshold" ? Number(value) : value,
     }) : prev);
   };
 
@@ -80,18 +71,10 @@ export default function EditMaterialPage({ params }: PageProps) {
     try {
       const result = await updateRawMaterial(id, {
         name: formData.name,
-        type: formData.type,
         unit: formData.unit,
-        costPerUnit: formData.costPerUnit,
-        stock: formData.stock,
+        pricePerUnit: formData.pricePerUnit,
+        quantity: formData.quantity,
         threshold: formData.threshold,
-        supplier: {
-          name: formData.supplierName,
-          contact: formData.supplierContact,
-          location: formData.supplierLocation,
-        },
-        notes: formData.notes,
-        updatedAt: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
       });
 
       router.push(`${ROUTES.inventory.rawMaterials.root}?message=${encodeURIComponent(result.message)}`);
@@ -129,36 +112,16 @@ export default function EditMaterialPage({ params }: PageProps) {
           <CardHeader><CardTitle>Material Information</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
-            <InputField label="Type" name="type" value={formData.type} onChange={handleChange} />
             <InputField label="Unit" name="unit" value={formData.unit} onChange={handleChange} />
-            <InputField label="Cost per Unit" name="costPerUnit" type="number" value={formData.costPerUnit} onChange={handleChange} />
+            <InputField label="Price per Unit" name="pricePerUnit" type="number" value={formData.pricePerUnit} onChange={handleChange} />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Stock Details</CardTitle></CardHeader>
+          <CardHeader><CardTitle>Quantity Details</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Stock" name="stock" type="number" value={formData.stock} onChange={handleChange} />
+            <InputField label="Quantity" name="quantity" type="number" value={formData.quantity} onChange={handleChange} />
             <InputField label="Threshold" name="threshold" type="number" value={formData.threshold} onChange={handleChange} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Supplier Information</CardTitle></CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Supplier Name" name="supplierName" value={formData.supplierName} onChange={handleChange} />
-            <InputField label="Contact" name="supplierContact" value={formData.supplierContact} onChange={handleChange} />
-            <div className="space-y-2 md:col-span-2">
-              <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Location</Label>
-              <Input name="supplierLocation" value={formData.supplierLocation} onChange={handleChange} className="h-10" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
-          <CardContent>
-            <textarea name="notes" value={formData.notes} onChange={handleChange} className="w-full rounded-md border border-border p-3 text-sm outline-none" rows={4} />
           </CardContent>
         </Card>
 

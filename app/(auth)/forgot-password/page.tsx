@@ -10,20 +10,21 @@ import { PrimaryFormField } from "@/components/shared/PrimaryFormField";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { StatusMessage } from "@/components/shared/status-message";
 import { ROUTES } from "@/lib/constants/routes";
-import { forgotPasswordSchema, ForgotPasswordFormValues } from "@/lib/schemas/forgotpassword.schema";
+import { forgotPasswordSchema } from "@/lib/schemas/forgotpassword.schema";
 import { requestPasswordReset } from "@/services/auth/auth.service";
+import type { PasswordResetRequestValues } from "@/types/api/auth";
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const form = useForm<ForgotPasswordFormValues>({
+  const form = useForm<PasswordResetRequestValues>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: "" },
   });
 
-  const handleSubmit = async (values: ForgotPasswordFormValues) => {
+  const handleSubmit = async (values: PasswordResetRequestValues) => {
     setLoading(true);
     setSubmitError(null);
 

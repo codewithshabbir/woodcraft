@@ -26,6 +26,7 @@ export function useAsyncResource<T>({ loader, initialData = null }: UseAsyncReso
   }, [loader])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load()
   }, [load])
 

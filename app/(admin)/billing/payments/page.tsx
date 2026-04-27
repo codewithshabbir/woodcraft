@@ -1,67 +1,63 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  BadgeCheck,
-  CreditCard,
-  HandCoins,
-  Search,
-  WalletMinimal,
-} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { BadgeCheck, CreditCard, HandCoins, Search, WalletMinimal } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { cn } from "@/lib/helpers";
 import { formatNumber } from "@/lib/format";
-
-const payments = [
-  { id: "PAY-001", invoiceId: "INV-001", customer: "Nova Studio", method: "Bank Transfer", amount: 50000, date: "2026-03-29", status: "Confirmed" },
-  { id: "PAY-002", invoiceId: "INV-001", customer: "Nova Studio", method: "Cash", amount: 30000, date: "2026-03-30", status: "Confirmed" },
-  { id: "PAY-003", invoiceId: "INV-003", customer: "Ayesha Interiors", method: "Cheque", amount: 60000, date: "2026-04-01", status: "Pending" },
-];
+import { listPayments } from "@/services/admin/admin.service";
 
 export default function BillingPaymentsPage() {
   const [search, setSearch] = useState("");
+  const loadPayments = useCallback(() => listPayments(), []);
+  const { data, error, isLoading, reload } = useAsyncResource({ loader: loadPayments });
 
+  const payments = useMemo(() => data ?? [], [data]);
   const filteredPayments = useMemo(() => {
     return payments.filter((payment) =>
-      `${payment.id} ${payment.invoiceId} ${payment.customer} ${payment.method}`
+      `${payment.id} ${payment.invoiceId}`
         .toLowerCase()
         .includes(search.toLowerCase()),
     );
-  }, [search]);
+  }, [payments, search]);
 
   const stats = useMemo(() => {
     const totalPayments = filteredPayments.length;
-    const confirmedAmount = filteredPayments
-      .filter((payment) => payment.status === "Confirmed")
-      .reduce((sum, payment) => sum + payment.amount, 0);
-    const pendingAmount = filteredPayments
-      .filter((payment) => payment.status === "Pending")
-      .reduce((sum, payment) => sum + payment.amount, 0);
+    const totalAmount = filteredPayments.reduce((sum, payment) => sum + payment.amount, 0);
 
-    return { totalPayments, confirmedAmount, pendingAmount };
+    return { totalPayments, totalAmount };
   }, [filteredPayments]);
+
+  const recoveryNotes = useMemo(() => {
+    const largestPayment = filteredPayments.slice().sort((a, b) => b.amount - a.amount)[0];
+
+    return [
+      { title: "Largest Payment", value: largestPayment ? `Rs. ${formatNumber(largestPayment.amount)}` : "Rs. 0", icon: HandCoins },
+      { title: "Largest Recovery", value: largestPayment ? `Rs. ${formatNumber(largestPayment.amount)}` : "Rs. 0", icon: CreditCard },
+      { title: "Total Entries", value: `${filteredPayments.length} payment(s)`, icon: WalletMinimal },
+    ];
+  }, [filteredPayments]);
+
+  if (isLoading) return <LoadingState title="Loading payments..." />;
+  if (error) return <ErrorState title="Payments could not be loaded" description={error} actionLabel="Retry" onAction={reload} />;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-primary">Payments</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Record recoveries, review payment methods, and monitor pending receipts
+          Record payments and monitor invoice recoveries
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {[
           { label: "Payment Entries", val: stats.totalPayments, icon: CreditCard, color: "text-primary" },
-          { label: "Confirmed Amount", val: `Rs. ${formatNumber(stats.confirmedAmount)}`, icon: BadgeCheck, color: "text-emerald-600" },
-          { label: "Pending Clearance", val: `Rs. ${formatNumber(stats.pendingAmount)}`, icon: WalletMinimal, color: "text-amber-600" },
+          { label: "Total Amount", val: `Rs. ${formatNumber(stats.totalAmount)}`, icon: BadgeCheck, color: "text-emerald-600" },
+          { label: "Last Updated", val: "-", icon: WalletMinimal, color: "text-amber-600" },
         ].map((item) => (
           <Card key={item.label} className="rounded-xl border border-border shadow-sm hover:shadow-md transition">
             <CardContent className="flex items-center justify-between p-5">
@@ -77,14 +73,14 @@ export default function BillingPaymentsPage() {
 
       <Card className="shadow-sm">
         <CardContent className="p-4">
-          <div className="flex items-center w-full max-w-md">
+          <div className="flex w-full max-w-md items-center">
             <div className="flex h-10 w-full items-center gap-2 rounded-md border border-input bg-muted px-3 focus-within:ring-2 focus-within:ring-ring">
               <Search className="h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by payment ID, invoice, customer, or method..."
+                placeholder="Search by payment ID or invoice..."
                 className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
             </div>
@@ -105,11 +101,8 @@ export default function BillingPaymentsPage() {
                   <tr className="border-b bg-muted/30 text-left text-muted-foreground">
                     <th className="p-4 text-[11px] font-bold uppercase">Payment</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Invoice</th>
-                    <th className="p-4 text-[11px] font-bold uppercase">Customer</th>
-                    <th className="p-4 text-[11px] font-bold uppercase">Method</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Amount</th>
-                    <th className="p-4 text-[11px] font-bold uppercase">Date</th>
-                    <th className="p-4 text-[11px] font-bold uppercase text-center">Status</th>
+                    <th className="p-4 text-[11px] font-bold uppercase">Payment Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -117,15 +110,8 @@ export default function BillingPaymentsPage() {
                     <tr key={payment.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
                       <td className="p-4 font-mono text-xs text-muted-foreground">{payment.id}</td>
                       <td className="p-4 font-mono text-xs text-muted-foreground">{payment.invoiceId}</td>
-                      <td className="p-4 font-semibold text-primary">{payment.customer}</td>
-                      <td className="p-4">{payment.method}</td>
                       <td className="p-4 font-semibold">Rs. {formatNumber(payment.amount)}</td>
-                      <td className="p-4">{payment.date}</td>
-                      <td className="p-4 text-center">
-                        <span className={cn("rounded-full px-3 py-1 text-[11px] font-bold uppercase", payment.status === "Confirmed" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700")}>
-                          {payment.status}
-                        </span>
-                      </td>
+                      <td className="p-4">{payment.paymentDate}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -140,11 +126,7 @@ export default function BillingPaymentsPage() {
             <CardDescription>Payment handling guidance for admin review</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[
-              { title: "Most Used Method", value: "Bank Transfer", icon: HandCoins },
-              { title: "Largest Recovery", value: "Rs. 60,000", icon: CreditCard },
-              { title: "Pending Review", value: "1 cheque clearance", icon: WalletMinimal },
-            ].map((item) => (
+            {recoveryNotes.map((item) => (
               <div key={item.title} className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-4">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary"><item.icon className="h-4 w-4" /></div>

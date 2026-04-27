@@ -10,7 +10,7 @@ import {
 } from "../ui/form";
 import { FieldValues } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { PrimaryFormFieldProps } from "@/types/auth";
+import { PrimaryFormFieldProps } from "@/types/ui/form";
 
 export const PrimaryFormField = <T extends FieldValues>({
   name,

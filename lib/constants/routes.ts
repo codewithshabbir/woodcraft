@@ -1,7 +1,6 @@
 export const ROUTES = {
   auth: {
     signin: "/signin",
-    signup: "/signup",
     forgotPassword: "/forgot-password",
   },
   dashboard: {
@@ -14,6 +13,12 @@ export const ROUTES = {
     detail: (id: string) => `/orders/${id}`,
     edit: (id: string) => `/orders/${id}/edit`,
   },
+  customers: {
+    root: "/customers",
+    new: "/customers/new",
+    detail: (id: string) => `/customers/${id}`,
+    edit: (id: string) => `/customers/${id}/edit`,
+  },
   inventory: {
     rawMaterials: {
       root: "/inventory/raw-materials",
@@ -21,29 +26,13 @@ export const ROUTES = {
       detail: (id: string) => `/inventory/raw-materials/${id}`,
       edit: (id: string) => `/inventory/raw-materials/${id}/edit`,
     },
-    stockLevels: "/inventory/stock-levels",
-    stockHistory: "/inventory/stock-history",
+    quantityLevels: "/inventory/quantity-levels",
   },
   suppliers: {
     root: "/suppliers",
     new: "/suppliers/new",
     detail: (id: string) => `/suppliers/${id}`,
     edit: (id: string) => `/suppliers/${id}/edit`,
-    purchaseRecords: {
-      root: "/suppliers/purchase-records",
-      new: "/suppliers/purchase-records/new",
-      detail: (id: string) => `/suppliers/purchase-records/${id}`,
-    },
-  },
-  production: {
-    assignWork: {
-      root: "/production/assign-work",
-      new: "/production/assign-work/new",
-      detail: (id: string) => `/production/assign-work/${id}`,
-      edit: (id: string) => `/production/assign-work/${id}/edit`,
-    },
-    workProgress: "/production/work-progress",
-    completedWork: "/production/completed-work",
   },
   employees: {
     root: "/employees",
@@ -61,27 +50,24 @@ export const ROUTES = {
   },
   estimation: {
     create: "/estimation/new",
-    history: "/estimation/history",
-    detail: (id: string) => `/estimation/${id}`,
-    edit: (id: string) => `/estimation/${id}/edit`,
   },
   reports: {
     sales: "/reports/sales",
     inventory: "/reports/inventory",
     employees: "/reports/employees",
+    timelines: "/reports/timelines",
   },
-  settings: {
-    profile: "/settings/profile",
-    system: "/settings/system",
+  expenses: {
+    root: "/expenses",
+    new: "/expenses/new",
   },
   worker: {
-    tasks: "/worker/tasks",
-    progress: "/worker/progress",
-    logHours: "/worker/log-hours",
-    history: "/worker/history",
-    materials: "/worker/materials",
+    tasks: "/orders",
+    progress: "/orders/progress",
+    logHours: "/employees/work-hours",
+    history: "/employees/work-hours",
+    materials: "/inventory/quantity-levels",
   },
 } as const
 
 export const WOODCRAFT_SIGNIN = ROUTES.auth.signin
-export const WOODCRAFT_SIGNUP = ROUTES.auth.signup

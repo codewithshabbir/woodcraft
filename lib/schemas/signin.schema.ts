@@ -9,5 +9,3 @@ export const signInSchema = z
 
     password: z.string().min(1, "Password is required"),
   })
-
-export type SignInFormValues = z.infer<typeof signInSchema>;

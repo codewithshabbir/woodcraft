@@ -1,21 +1,27 @@
 import { FileSpreadsheet, Wallet } from "lucide-react";
+import { notFound } from "next/navigation";
 
-import InfoPair from "@/features/admin/components/shared/info-pair";
-import PageHeader from "@/features/admin/components/shared/page-header";
+import InfoPair from "@/components/shared/info-pair";
+import PageHeader from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ROUTES } from "@/lib/constants/routes";
-import { getInvoice } from "@/services/admin/admin.service";
+import { getInvoice } from "@/lib/server/admin-data";
 import { formatNumber } from "@/lib/format";
+import { auth } from "@/lib/auth";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const invoice = await getInvoice(id);
+  const session = await auth();
+  const invoice = await getInvoice(id, { session });
+  if (!invoice) {
+    notFound();
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <PageHeader
         title="Invoice Details"
-        description={`${invoice.id} - ${invoice.customer}`}
+        description={invoice.id}
         backHref={ROUTES.billing.invoices.root}
       />
 
@@ -30,17 +36,10 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-6">
               <InfoPair label="Order ID" value={invoice.orderId} />
-              <InfoPair label="Customer" value={invoice.customer} />
-              <InfoPair label="Invoice Amount" value={`Rs. ${formatNumber(invoice.amount)}`} />
-              <InfoPair label="Paid" value={`Rs. ${formatNumber(invoice.paid)}`} />
+              <InfoPair label="Status" value={invoice.status} />
+              <InfoPair label="Total Amount" value={`Rs. ${formatNumber(invoice.totalAmount)}`} />
+              <InfoPair label="Generated Date" value={new Date(invoice.generatedDate).toLocaleDateString()} />
             </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Notes</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{invoice.notes}</CardContent>
           </Card>
         </div>
 
@@ -53,8 +52,8 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <InfoPair label="Outstanding" value={`Rs. ${formatNumber((invoice.amount - invoice.paid))}`} />
-              <InfoPair label="Due Date" value={invoice.dueDate} />
+              <InfoPair label="Total Paid" value={`Rs. ${formatNumber(invoice.totalPaid || 0)}`} />
+              <InfoPair label="Remaining" value={`Rs. ${formatNumber(invoice.remainingBalance || 0)}`} />
             </CardContent>
           </Card>
         </div>

@@ -1,8 +1,12 @@
-import { WOODCRAFT_SIGNIN } from "@/lib/constants/routes";
 import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    redirect(WOODCRAFT_SIGNIN)
-  );
+import { auth } from "@/lib/auth";
+
+export default async function Home() {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/signin");
+  }
+
+  redirect(session.user.role === "employee" ? "/orders" : "/dashboard");
 }

@@ -25,20 +25,12 @@ export default function NewRawMaterialPage() {
 
     try {
       const result = await createRawMaterial({
+        id: String(formData.get("id") ?? ""),
         name: String(formData.get("name") ?? ""),
-        type: String(formData.get("type") ?? ""),
         unit: String(formData.get("unit") ?? ""),
-        costPerUnit: Number(formData.get("costPerUnit") ?? 0),
-        stock: Number(formData.get("stock") ?? 0),
+        pricePerUnit: Number(formData.get("pricePerUnit") ?? 0),
+        quantity: Number(formData.get("quantity") ?? 0),
         threshold: Number(formData.get("threshold") ?? 0),
-        supplier: {
-          name: String(formData.get("supplierName") ?? ""),
-          contact: String(formData.get("supplierContact") ?? "N/A"),
-          location: String(formData.get("supplierLocation") ?? "N/A"),
-        },
-        createdAt: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-        updatedAt: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-        notes: String(formData.get("notes") ?? ""),
       });
 
       router.push(`${ROUTES.inventory.rawMaterials.root}?message=${encodeURIComponent(result.message)}`);
@@ -51,11 +43,10 @@ export default function NewRawMaterialPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
-      <div className="flex items-center justify-between"><div><h1 className="text-3xl font-bold tracking-tight text-primary">Add Raw Material</h1><p className="mt-1 text-sm text-muted-foreground">Create a new inventory item with stock and supplier details</p></div><Link href={ROUTES.inventory.rawMaterials.root}><PrimaryButton variant="outline" className="p-5 border-primary hover:border-primary"><ArrowLeft className="h-4 w-4" />Back</PrimaryButton></Link></div>
+      <div className="flex items-center justify-between"><div><h1 className="text-3xl font-bold tracking-tight text-primary">Add Raw Material</h1><p className="mt-1 text-sm text-muted-foreground">Create a new inventory item with quantity, pricing, and reorder threshold</p></div><Link href={ROUTES.inventory.rawMaterials.root}><PrimaryButton variant="outline" className="p-5 border-primary hover:border-primary"><ArrowLeft className="h-4 w-4" />Back</PrimaryButton></Link></div>
       <form className="space-y-6" onSubmit={handleSubmit}>
         {submitError ? <StatusMessage type="error" message={submitError} /> : null}
-        <Card className="shadow-sm"><CardHeader><CardTitle>Material Information</CardTitle></CardHeader><CardContent className="grid gap-6 md:grid-cols-2"><Field label="Material ID"><Input name="id" className="h-10" placeholder="MAT-006" /></Field><Field label="Material Name"><Input name="name" className="h-10" placeholder="Walnut Sheet" /></Field><Field label="Category"><Input name="type" className="h-10" placeholder="Wood" /></Field><Field label="Unit"><Input name="unit" className="h-10" placeholder="sheet" /></Field><Field label="Cost Per Unit"><Input name="costPerUnit" type="number" className="h-10" placeholder="1650" /></Field><Field label="Opening Stock"><Input name="stock" type="number" className="h-10" placeholder="32" /></Field><Field label="Reorder Level"><Input name="threshold" type="number" className="h-10" placeholder="10" /></Field><Field label="Supplier"><Input name="supplierName" className="h-10" placeholder="ABC Traders" /></Field><Field label="Supplier Contact"><Input name="supplierContact" className="h-10" placeholder="+92 300 1234567" /></Field><Field label="Supplier Location"><Input name="supplierLocation" className="h-10" placeholder="Karachi" /></Field></CardContent></Card>
-        <Card className="shadow-sm"><CardHeader><CardTitle>Notes</CardTitle></CardHeader><CardContent><textarea name="notes" className="min-h-[120px] w-full rounded-md border border-border p-3 text-sm outline-none" placeholder="Storage requirements or purchasing notes..." /></CardContent></Card>
+        <Card className="shadow-sm"><CardHeader><CardTitle>Material Information</CardTitle></CardHeader><CardContent className="grid gap-6 md:grid-cols-2"><Field label="Material ID"><Input name="id" className="h-10" placeholder="MAT-006" /></Field><Field label="Material Name"><Input name="name" className="h-10" placeholder="Walnut Sheet" /></Field><Field label="Unit"><Input name="unit" className="h-10" placeholder="sheet" /></Field><Field label="Price Per Unit"><Input name="pricePerUnit" type="number" className="h-10" placeholder="1650" /></Field><Field label="Quantity"><Input name="quantity" type="number" className="h-10" placeholder="32" /></Field><Field label="Threshold"><Input name="threshold" type="number" className="h-10" placeholder="10" /></Field></CardContent></Card>
         <div className="flex justify-end gap-3"><Link href={ROUTES.inventory.rawMaterials.root}><PrimaryButton variant="outline" className="border-primary hover:border-primary">Cancel</PrimaryButton></Link><PrimaryButton className="p-5" disabled={isSubmitting}><Save className="h-4 w-4" />{isSubmitting ? "Creating..." : "Create Material"}</PrimaryButton></div>
       </form>
     </div>

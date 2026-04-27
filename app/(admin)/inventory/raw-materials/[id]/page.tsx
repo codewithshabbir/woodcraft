@@ -3,15 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ArrowLeft,
   Package,
-  User,
-  Calendar,
   AlertTriangle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { ROUTES } from "@/lib/constants/routes";
-import { getRawMaterial } from "@/services/admin/admin.service";
+import { getRawMaterial } from "@/lib/server/admin-data";
 import { formatNumber } from "@/lib/format";
+import { auth } from "@/lib/auth";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -20,20 +19,21 @@ type PageProps = {
 export default async function RawMaterialViewPage({ params }: PageProps) {
   const resolvedParams = await params;
   const id = resolvedParams.id;
-  const material = await getRawMaterial(id);
+  const session = await auth();
+  const material = await getRawMaterial(id, { session });
 
-  const isOutOfStock = material.stock === 0;
-  const isLowStock = material.stock <= material.threshold && material.stock > 0;
+  const isDepleted = material.quantity === 0;
+  const isLowQuantity = material.quantity < material.threshold && material.quantity > 0;
 
-  const statusText = isOutOfStock
-    ? "Out of Stock"
-    : isLowStock
-    ? "Low Stock"
-    : "In Stock";
+  const statusText = isDepleted
+    ? "Depleted"
+    : isLowQuantity
+    ? "Low Quantity"
+    : "OK";
 
-  const statusColor = isOutOfStock
+  const statusColor = isDepleted
     ? "bg-red-100 text-red-700"
-    : isLowStock
+    : isLowQuantity
     ? "bg-yellow-100 text-yellow-700"
     : "bg-green-100 text-green-700";
 
@@ -76,11 +76,10 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-6">
-              <InfoBlock label="Type" value={material.type} />
               <InfoBlock label="Unit" value={material.unit} />
               <InfoBlock
-                label="Cost"
-                value={`Rs. ${formatNumber(material.costPerUnit)}`}
+                label="Price per Unit"
+                value={`Rs. ${formatNumber(material.pricePerUnit)}`}
               />
 
               <div className="space-y-2">
@@ -98,40 +97,21 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
               </div>
             </CardContent>
           </Card>
-
-          {/* Supplier */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5 text-primary" />
-                Supplier
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <InfoBlock label="Name" value={material.supplier.name} />
-              <InfoBlock label="Phone" value={material.supplier.contact} />
-              <InfoBlock
-                label="Location"
-                value={material.supplier.location}
-                className="sm:col-span-2"
-              />
-            </CardContent>
-          </Card>
         </div>
 
         {/* RIGHT */}
         <div className="space-y-6">
-          {/* Stock */}
+          {/* Quantity */}
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-primary" />
-                Stock
+                Quantity
               </CardTitle>
             </CardHeader>
             <CardContent>
               <h2 className="text-4xl font-black text-foreground">
-                {material.stock}{" "}
+                {material.quantity}{" "}
                 <span className="text-lg font-medium text-muted-foreground">
                   {material.unit}
                 </span>
@@ -139,40 +119,13 @@ export default async function RawMaterialViewPage({ params }: PageProps) {
 
               <div className="mt-6 rounded-lg border border-border bg-muted/50 p-3">
                 <div className="space-y-2">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Threshold
-                </p>
-                <span className="font-bold text-foreground">
-                  {material.threshold}
-                </span>
-              </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notes */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Notes</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm leading-relaxed text-muted-foreground">
-              {material.notes}
-            </CardContent>
-          </Card>
-
-          {/* Dates */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>History</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-4 w-4 text-primary/60" />
-                <InfoBlock label="Created" value={material.createdAt} className="flex-1" />
-              </div>
-              <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-4 w-4 text-primary/60" />
-                <InfoBlock label="Updated" value={material.updatedAt} className="flex-1" />
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Threshold
+                  </p>
+                  <span className="font-bold text-foreground">
+                    {material.threshold}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>

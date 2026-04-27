@@ -1,63 +1,119 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Clock3, Search, Timer, WalletCards, Wrench } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Check, Clock3, Search, Timer, WalletCards, X } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { StatusMessage } from "@/components/shared/status-message";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { cn } from "@/lib/helpers";
 import { formatNumber } from "@/lib/format";
-
-const workLogs = [
-  { employee: "Ali Raza", orderId: "ORD-104", task: "Cabinet Frame Assembly", hours: 18, overtime: 4, wage: 20900, completion: 88 },
-  { employee: "Sajid Iqbal", orderId: "ORD-101", task: "Sanding and Finish Prep", hours: 14, overtime: 2, wage: 11200, completion: 76 },
-  { employee: "Usman Tariq", orderId: "ORD-098", task: "On-site Installation", hours: 10, overtime: 0, wage: 8000, completion: 62 },
-];
+import { createWorkLog, listEmployees, listOrders, listWorkLogs, updateWorkLog } from "@/services/admin/admin.service";
+import { getProfile } from "@/services/auth/profile.service";
 
 export default function EmployeeWorkHoursPage() {
   const [search, setSearch] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const loadProfile = useCallback(() => getProfile(), []);
+  const loadWorkLogs = useCallback(() => listWorkLogs(), []);
+  const loadEmployees = useCallback(async () => {
+    const profile = await getProfile();
+    return profile?.role === "employee" ? [] : listEmployees();
+  }, []);
+  const loadOrders = useCallback(async () => {
+    const profile = await getProfile();
+    void profile;
+    return listOrders();
+  }, []);
+
+  const { data: profile } = useAsyncResource({ loader: loadProfile });
+  const { data: workLogs, error, isLoading, reload } = useAsyncResource({ loader: loadWorkLogs });
+  const { data: employees } = useAsyncResource({ loader: loadEmployees, initialData: [] });
+  const { data: orders } = useAsyncResource({ loader: loadOrders, initialData: [] });
+  const isEmployee = profile?.role === "employee";
+
+  const availableOrders = useMemo(() => orders ?? [], [orders]);
 
   const filteredLogs = useMemo(() => {
-    return workLogs.filter((log) =>
-      `${log.employee} ${log.orderId} ${log.task}`
+    return (workLogs ?? []).filter((log) =>
+      `${log.userName ?? ""} ${log.orderLabel ?? ""} ${log.taskDescription ?? ""} ${log.status}`
         .toLowerCase()
         .includes(search.toLowerCase()),
     );
-  }, [search]);
+  }, [search, workLogs]);
 
   const stats = useMemo(() => {
-    const totalHours = filteredLogs.reduce((sum, log) => sum + log.hours, 0);
-    const overtimeHours = filteredLogs.reduce((sum, log) => sum + log.overtime, 0);
-    const laborCost = filteredLogs.reduce((sum, log) => sum + log.wage, 0);
-    const avgCompletion = Math.round(
-      filteredLogs.reduce((sum, log) => sum + log.completion, 0) /
-        Math.max(filteredLogs.length, 1),
-    );
+    const approvedLogs = filteredLogs.filter((log) => log.status === "approved");
+    const pendingLogs = filteredLogs.filter((log) => log.status === "pending");
+    const totalHours = approvedLogs.reduce((sum, log) => sum + log.hoursWorked, 0);
+    const approvedWages = approvedLogs.reduce((sum, log) => sum + (log.wage || 0), 0);
 
-    return { totalHours, overtimeHours, laborCost, avgCompletion };
+    return {
+      totalHours,
+      pendingCount: pendingLogs.length,
+      approvedWages,
+      totalLogs: filteredLogs.length,
+    };
   }, [filteredLogs]);
+
+  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      const employeeId = String(formData.get("employeeId") ?? "");
+      await createWorkLog({
+        ...(isEmployee ? {} : { userId: employeeId }),
+        orderId: String(formData.get("orderId") ?? ""),
+        taskDescription: String(formData.get("taskDescription") ?? ""),
+        progress: Number(formData.get("progress") ?? 0),
+        hoursWorked: Number(formData.get("hoursWorked") ?? 0),
+        workDate: String(formData.get("workDate") ?? ""),
+        status: "pending",
+      });
+
+      event.currentTarget.reset();
+      await reload();
+    } catch (mutationError) {
+      setSubmitError(mutationError instanceof Error ? mutationError.message : "Work log could not be recorded.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleStatusUpdate = async (id: string, status: "approved" | "rejected") => {
+    await updateWorkLog(id, { status });
+    await reload();
+  };
+
+  if (isLoading) return <LoadingState title="Loading work hours..." />;
+  if (error) return <ErrorState title="Work hours could not be loaded" description={error} actionLabel="Retry" onAction={reload} />;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-primary">Work Hours</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Track employee work logs, wages, and task completion rates
+          {isEmployee
+            ? "Record your work hours and review the status of your submitted logs"
+            : "Record employee hours, approve entries, and calculate wages from real work logs"}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Total Hours", val: stats.totalHours, icon: Clock3, color: "text-primary" },
-          { label: "Overtime", val: `${stats.overtimeHours} hrs`, icon: Timer, color: "text-amber-600" },
-          { label: "Labor Cost", val: `Rs. ${formatNumber(stats.laborCost)}`, icon: WalletCards, color: "text-emerald-600" },
-          { label: "Task Completion", val: `${stats.avgCompletion}%`, icon: Wrench, color: "text-sky-600" },
+          { label: "Approved Hours", val: `${stats.totalHours} hrs`, icon: Clock3, color: "text-primary" },
+          { label: "Pending Review", val: stats.pendingCount, icon: Timer, color: "text-amber-600" },
+          { label: "Approved Wages", val: `Rs. ${formatNumber(stats.approvedWages)}`, icon: WalletCards, color: "text-emerald-600" },
+          { label: "Work Logs", val: stats.totalLogs, icon: Clock3, color: "text-sky-600" },
         ].map((item) => (
           <Card key={item.label} className="rounded-xl border border-border shadow-sm hover:shadow-md transition">
             <CardContent className="flex items-center justify-between p-5">
@@ -71,60 +127,135 @@ export default function EmployeeWorkHoursPage() {
         ))}
       </div>
 
-      <Card className="shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex items-center w-full max-w-md">
-            <div className="flex h-10 w-full items-center gap-2 rounded-md border border-input bg-muted px-3 focus-within:ring-2 focus-within:ring-ring">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by employee, order ID, or task..."
-                className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.9fr]">
+      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.35fr]">
         <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>Weekly Work Logs</CardTitle>
-            <CardDescription>Logged hours for assigned jobs and wage impact per task</CardDescription>
+            <CardTitle>{isEmployee ? "Log My Work Hours" : "Add Work Log"}</CardTitle>
+            <CardDescription>
+              {isEmployee
+                ? "Submit your own hours against the orders assigned to you."
+                : "Log hours against an order and review them from the same admin screen"}
+            </CardDescription>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent>
+            {submitError ? <StatusMessage type="error" message={submitError} className="mb-4" /> : null}
+            <form className="space-y-4" onSubmit={handleCreate}>
+              {!isEmployee ? (
+                <Field label="Employee">
+                  <select name="employeeId" className="h-10 w-full rounded-md border border-border bg-muted px-3 text-sm outline-none">
+                    <option value="">Select employee</option>
+                    {(employees ?? []).map((employee) => (
+                      <option key={employee.id} value={employee.id}>{employee.name}</option>
+                    ))}
+                  </select>
+                </Field>
+              ) : null}
+
+              <Field label="Order">
+                <select name="orderId" className="h-10 w-full rounded-md border border-border bg-muted px-3 text-sm outline-none">
+                  <option value="">Select order</option>
+                  {availableOrders.map((order) => (
+                    <option key={order.id} value={order.id}>{order.id} - {order.customerId}</option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Task Description"><Input name="taskDescription" className="h-10" placeholder="Frame assembly" /></Field>
+              <Field label="Progress (%)"><Input name="progress" type="number" min={0} max={100} className="h-10" placeholder="0" /></Field>
+              <Field label="Hours Worked"><Input name="hoursWorked" type="number" min={1} className="h-10" placeholder="8" /></Field>
+              <Field label="Work Date"><Input name="workDate" type="date" className="h-10" /></Field>
+
+              <PrimaryButton className="w-full p-5" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Record Work Log"}
+              </PrimaryButton>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>{isEmployee ? "My Work Logs" : "Work Log Review"}</CardTitle>
+            <CardDescription>
+              {isEmployee
+                ? "See the status of the work logs you have submitted."
+                : "Approve or reject pending entries and keep wage totals up to date"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center w-full max-w-md">
+              <div className="flex h-10 w-full items-center gap-2 rounded-md border border-input bg-muted px-3 focus-within:ring-2 focus-within:ring-ring">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search by employee, order, task, or status..."
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+            </div>
+
             <div className="overflow-x-auto rounded-md border border-border">
-              <table className="w-full min-w-[860px] text-sm">
+              <table className="w-full min-w-[980px] text-sm">
                 <thead>
                   <tr className="border-b bg-muted/30 text-left text-muted-foreground">
                     <th className="p-4 text-[11px] font-bold uppercase">Employee</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Order</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Task</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Hours</th>
-                    <th className="p-4 text-[11px] font-bold uppercase">Overtime</th>
+                    <th className="p-4 text-[11px] font-bold uppercase">Date</th>
                     <th className="p-4 text-[11px] font-bold uppercase">Wage</th>
-                    <th className="p-4 text-[11px] font-bold uppercase">Completion</th>
+                    <th className="p-4 text-[11px] font-bold uppercase text-center">Status</th>
+                    <th className="p-4 text-[11px] font-bold uppercase text-right">{isEmployee ? "Review" : "Actions"}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLogs.map((log) => (
-                    <tr key={`${log.employee}-${log.orderId}`} className="border-b border-border last:border-none hover:bg-muted/40 transition">
-                      <td className="p-4 font-semibold text-primary">{log.employee}</td>
-                      <td className="p-4 font-mono text-xs text-muted-foreground">{log.orderId}</td>
-                      <td className="p-4">{log.task}</td>
-                      <td className="p-4">{log.hours} hrs</td>
-                      <td className="p-4">{log.overtime} hrs</td>
-                      <td className="p-4 font-semibold">Rs. {formatNumber(log.wage)}</td>
-                      <td className="p-4 w-[220px]">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Progress</span>
-                            <span className="font-bold text-primary">{log.completion}%</span>
+                    <tr key={log.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
+                      <td className="p-4 font-semibold text-primary">{log.userName}</td>
+                      <td className="p-4 text-muted-foreground">{log.orderLabel}</td>
+                      <td className="p-4">{log.taskDescription || "-"}</td>
+                      <td className="p-4">{log.hoursWorked} hrs</td>
+                      <td className="p-4">{log.workDate}</td>
+                      <td className="p-4 font-semibold">Rs. {formatNumber(log.wage || 0)}</td>
+                      <td className="p-4 text-center">
+                        <span
+                          className={cn(
+                            "rounded-full px-3 py-1 text-[11px] font-bold uppercase",
+                            log.status === "approved"
+                              ? "bg-green-100 text-green-700"
+                              : log.status === "rejected"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-yellow-100 text-yellow-700",
+                          )}
+                        >
+                          {log.status}
+                        </span>
+                      </td>
+                      <td className="p-4 text-right whitespace-nowrap">
+                        {!isEmployee && log.status === "pending" ? (
+                          <div className="flex justify-end gap-2">
+                            <PrimaryButton
+                              size="sm"
+                              className="h-8 px-3"
+                              onClick={() => handleStatusUpdate(log.id, "approved")}
+                            >
+                              <Check className="h-4 w-4" />
+                            </PrimaryButton>
+                            <PrimaryButton
+                              size="sm"
+                              variant="destructive"
+                              className="h-8 px-3"
+                              onClick={() => handleStatusUpdate(log.id, "rejected")}
+                            >
+                              <X className="h-4 w-4" />
+                            </PrimaryButton>
                           </div>
-                          <Progress value={log.completion} className="h-2" />
-                        </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            {isEmployee ? "Awaiting admin review" : "Reviewed"}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -133,26 +264,16 @@ export default function EmployeeWorkHoursPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Wage Summary</CardTitle>
-            <CardDescription>Quick labor overview for weekly admin review</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { title: "Regular Hours Share", value: `${Math.round((stats.totalHours / (stats.totalHours + stats.overtimeHours)) * 100)}%` },
-              { title: "Overtime Exposure", value: `${Math.round((stats.overtimeHours / Math.max(stats.totalHours, 1)) * 100)}%` },
-              { title: "Avg Wage / Task", value: `Rs. ${formatNumber(Math.round(stats.laborCost / Math.max(filteredLogs.length, 1)))}` },
-            ].map((item) => (
-              <div key={item.title} className="rounded-xl border border-border bg-muted/20 p-4">
-                <p className="text-sm text-muted-foreground">{item.title}</p>
-                <p className="mt-1 text-2xl font-bold text-primary">{item.value}</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
       </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{label}</Label>
+      {children}
     </div>
   );
 }

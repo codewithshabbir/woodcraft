@@ -18,13 +18,13 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/shared/data-s
 import { StatusMessage } from "@/components/shared/status-message";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ConfirmDeleteDialog from "@/features/admin/components/shared/confirm-delete-dialog";
-import PageHeader from "@/features/admin/components/shared/page-header";
-import SearchInput from "@/features/admin/components/shared/search-input";
-import StatCard from "@/features/admin/components/shared/stat-card";
+import ConfirmDeleteDialog from "@/components/shared/confirm-delete-dialog";
+import PageHeader from "@/components/shared/page-header";
+import SearchInput from "@/components/shared/search-input";
+import StatCard from "@/components/shared/stat-card";
 import { useAsyncResource } from "@/hooks/use-async-resource";
 import { ROUTES } from "@/lib/constants/routes";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers";
 import { listRawMaterials } from "@/services/admin/admin.service";
 import { formatNumber } from "@/lib/format";
 
@@ -45,27 +45,27 @@ function RawMaterialPageContent() {
     }
 
     return materials.filter((material) =>
-      `${material.name} ${material.type} ${material.id}`.toLowerCase().includes(query),
+      `${material.name} ${material.id}`.toLowerCase().includes(query),
     );
   }, [materials, search]);
 
   const stats = useMemo(() => {
     const totalItems = filteredMaterials.length;
-    const lowStockCount = filteredMaterials.filter((material) => material.stock < material.threshold).length;
-    const healthyStockCount = totalItems - lowStockCount;
+    const lowQuantityCount = filteredMaterials.filter((material) => material.quantity < material.threshold).length;
+    const healthyQuantityCount = totalItems - lowQuantityCount;
     const totalInventoryValue = filteredMaterials.reduce(
-      (sum, material) => sum + material.stock * material.costPerUnit,
+      (sum, material) => sum + material.quantity * material.pricePerUnit,
       0,
     );
 
-    return { totalItems, lowStockCount, healthyStockCount, totalInventoryValue };
+    return { totalItems, lowQuantityCount, healthyQuantityCount, totalInventoryValue };
   }, [filteredMaterials]);
 
   return (
     <div className="space-y-8">
       <PageHeader
         title="Raw Materials"
-        description="Monitor inventory levels, reorder thresholds, and unit costs"
+        description="Monitor inventory levels, reorder thresholds, and unit prices"
         action={
           <Link href={ROUTES.inventory.rawMaterials.new}>
             <PrimaryButton className="p-5">
@@ -83,7 +83,7 @@ function RawMaterialPageContent() {
       {!isLoading && error ? (
         <ErrorState
           title="Raw materials could not be loaded"
-          description="The inventory list is using the mock service layer right now. Retry to restore the screen state."
+          description={error}
           actionLabel="Retry"
           onAction={reload}
         />
@@ -99,8 +99,8 @@ function RawMaterialPageContent() {
               icon={Package}
               color="text-sky-600"
             />
-            <StatCard label="Low Stock" value={stats.lowStockCount} icon={AlertTriangle} color="text-red-600" />
-            <StatCard label="Healthy Stock" value={stats.healthyStockCount} icon={CheckCircle} color="text-emerald-600" />
+            <StatCard label="Low Quantity" value={stats.lowQuantityCount} icon={AlertTriangle} color="text-red-600" />
+            <StatCard label="Healthy Quantity" value={stats.healthyQuantityCount} icon={CheckCircle} color="text-emerald-600" />
           </div>
 
           <Card className="shadow-sm">
@@ -108,7 +108,7 @@ function RawMaterialPageContent() {
               <SearchInput
                 value={search}
                 onChange={setSearch}
-                placeholder="Search by material name, category, or ID..."
+                placeholder="Search by material name or ID..."
                 className="w-full max-w-md"
               />
             </CardContent>
@@ -117,45 +117,43 @@ function RawMaterialPageContent() {
           <Card className="shadow-sm overflow-hidden">
             <CardHeader>
               <CardTitle>Inventory List</CardTitle>
-              <CardDescription>Detailed view of current stock, cost, and reorder thresholds</CardDescription>
+              <CardDescription>Detailed view of current quantity, price, and reorder thresholds</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {filteredMaterials.length === 0 ? (
                 <EmptyState
                   title="No materials match this search"
-                  description="Try a different material name, category, or code to see matching inventory items."
+                  description="Try a different material name or code to see matching inventory items."
                   className="min-h-[220px] rounded-none border-0"
                 />
               ) : (
                 <div className="w-full overflow-x-auto rounded-md border border-border">
-                  <table className="w-full min-w-[760px] text-sm">
+                  <table className="w-full min-w-[720px] text-sm">
                     <thead>
                       <tr className="border-b bg-muted/30 text-left text-muted-foreground">
                         <th className="p-4 text-[11px] font-bold uppercase">ID</th>
                         <th className="p-4 text-[11px] font-bold uppercase">Material</th>
-                        <th className="p-4 text-[11px] font-bold uppercase">Category</th>
-                        <th className="p-4 text-[11px] font-bold uppercase">Stock</th>
-                        <th className="p-4 text-[11px] font-bold uppercase">Cost</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Quantity</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Price / Unit</th>
                         <th className="p-4 text-center text-[11px] font-bold uppercase">Status</th>
                         <th className="p-4 text-right text-[11px] font-bold uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredMaterials.map((material) => {
-                        const isLow = material.stock < material.threshold;
+                        const isLow = material.quantity < material.threshold;
 
                         return (
                           <tr key={material.id} className="border-b border-border last:border-none hover:bg-muted/40 transition">
                             <td className="p-4 text-xs font-mono text-muted-foreground whitespace-nowrap">{material.id}</td>
                             <td className="p-4 font-semibold text-primary whitespace-nowrap">{material.name}</td>
-                            <td className="p-4 whitespace-nowrap text-muted-foreground">{material.type}</td>
                             <td className="p-4 whitespace-nowrap">
                               <span className={cn("font-bold", isLow ? "text-red-600" : "text-foreground")}>
-                                {material.stock} {material.unit}
+                                {material.quantity} {material.unit}
                               </span>
                               <span className="ml-1 text-[10px] text-muted-foreground">(Min: {material.threshold})</span>
                             </td>
-                            <td className="p-4 whitespace-nowrap">Rs. {formatNumber(material.costPerUnit)}</td>
+                            <td className="p-4 whitespace-nowrap">Rs. {formatNumber(material.pricePerUnit)}</td>
                             <td className="p-4 text-center whitespace-nowrap">
                               <span
                                 className={cn(

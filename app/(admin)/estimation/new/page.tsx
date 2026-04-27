@@ -1,4 +1,4 @@
-import EstimationForm from "@/features/estimation/components/estimation-form";
+import EstimationForm from "@/features/estimation/estimation-form";
 
 export default function CreateEstimationPage() {
   return (

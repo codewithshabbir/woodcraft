@@ -18,7 +18,6 @@ type SupplierForm = {
   phone: string;
   email: string;
   location: string;
-  notes: string;
 };
 
 export default function AddSupplierPage() {
@@ -28,12 +27,11 @@ export default function AddSupplierPage() {
     phone: "",
     email: "",
     location: "",
-    notes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -49,9 +47,6 @@ export default function AddSupplierPage() {
         phone: formData.phone,
         email: formData.email,
         location: formData.location,
-        notes: formData.notes,
-        materials: [],
-        status: "Active Supplier",
       });
 
       router.push(`${ROUTES.suppliers.root}?message=${encodeURIComponent(result.message)}`);
@@ -99,22 +94,6 @@ export default function AddSupplierPage() {
             <Field label="Location">
               <Input name="location" value={formData.location} onChange={handleChange} placeholder="City, Country" className="h-10 bg-muted/30" />
             </Field>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm border border-border">
-          <CardHeader>
-            <CardTitle className="text-lg">Notes</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              placeholder="Additional supplier details..."
-              className="min-h-[120px] w-full rounded-md border border-border p-3 text-sm outline-none focus:ring-2 focus:ring-primary"
-            />
           </CardContent>
         </Card>
 

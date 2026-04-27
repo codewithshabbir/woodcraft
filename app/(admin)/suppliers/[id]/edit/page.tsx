@@ -34,7 +34,6 @@ export default function EditSupplierPage({ params }: { params: Promise<{ id: str
         phone: String(formData.get("phone") ?? ""),
         email: String(formData.get("email") ?? ""),
         location: String(formData.get("location") ?? ""),
-        notes: String(formData.get("notes") ?? ""),
       });
 
       router.push(`${ROUTES.suppliers.root}?message=${encodeURIComponent(result.message)}`);
@@ -56,7 +55,6 @@ export default function EditSupplierPage({ params }: { params: Promise<{ id: str
         {error ? <StatusMessage type="error" message={error} /> : null}
         {submitError ? <StatusMessage type="error" message={submitError} /> : null}
         <Card className="shadow-sm"><CardHeader><CardTitle>Supplier Information</CardTitle></CardHeader><CardContent className="grid gap-6 md:grid-cols-2"><Field label="Supplier Name"><Input name="name" className="h-10" defaultValue={supplier.name} /></Field><Field label="Phone"><Input name="phone" className="h-10" defaultValue={supplier.phone} /></Field><Field label="Email"><Input name="email" className="h-10" defaultValue={supplier.email} /></Field><Field label="Location"><Input name="location" className="h-10" defaultValue={supplier.location} /></Field></CardContent></Card>
-        <Card className="shadow-sm"><CardHeader><CardTitle>Notes</CardTitle></CardHeader><CardContent><textarea name="notes" className="min-h-[120px] w-full rounded-md border border-border p-3 text-sm outline-none" defaultValue={supplier.notes} /></CardContent></Card>
         <div className="flex justify-end gap-3"><Link href={ROUTES.suppliers.detail(id)}><PrimaryButton variant="outline" className="border-primary hover:border-primary">Cancel</PrimaryButton></Link><PrimaryButton className="p-5" disabled={isSubmitting}><Save className="h-4 w-4" />{isSubmitting ? "Saving..." : "Save Changes"}</PrimaryButton></div>
       </form>
     </div>

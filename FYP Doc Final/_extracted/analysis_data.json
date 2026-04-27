@@ -1,0 +1,696 @@
+{
+  "project_doc": {
+    "path": "FYP Doc Final\\_extracted\\Project Doc.md",
+    "headings": [
+      {
+        "line": 1,
+        "level": 1,
+        "title": "Extracted: Project Doc.docx"
+      }
+    ],
+    "functional_requirements": [
+      {
+        "category": "Customer/Order Management",
+        "items": [
+          "Register new customers",
+          "Create & track woodwork orders (furniture, repairs, custom designs)",
+          "Order status tracking (Pending  In Progress  Completed  Delivered)",
+          "Cost estimation (materials + labor)"
+        ]
+      },
+      {
+        "category": "Inventory/Materials Management",
+        "items": [
+          "Track raw materials (wood types, nails, polish, paint, tools)",
+          "Auto-decrease stock when assigned to an order",
+          "Low-stock alerts & supplier details"
+        ]
+      },
+      {
+        "category": "Employee/Labor Management",
+        "items": [
+          "Assign workers/craftsmen to specific jobs",
+          "Track work hours & wages",
+          "Performance & workload tracking"
+        ]
+      },
+      {
+        "category": "Billing & Payments",
+        "items": [
+          "Auto-generate invoices for customers",
+          "Record payments (partial or full)",
+          "Reports of revenue vs. expenses"
+        ]
+      },
+      {
+        "category": "Reports & Analytics",
+        "items": [
+          "Monthly income & expenses",
+          "Most used wood/materials",
+          "Order completion times",
+          "Employee productivity"
+        ]
+      }
+    ],
+    "text_len": 1717
+  },
+  "srs": {
+    "path": "FYP Doc Final\\_extracted\\Software Requirements Specification Doc.md",
+    "headings": [
+      {
+        "line": 1,
+        "level": 1,
+        "title": "Extracted: Software Requirements Specification Doc.docx"
+      },
+      {
+        "line": 3,
+        "level": 1,
+        "title": "Woodcraft"
+      },
+      {
+        "line": 7,
+        "level": 1,
+        "title": "Version 2.0"
+      },
+      {
+        "line": 122,
+        "level": 1,
+        "title": "Scope of Project:"
+      },
+      {
+        "line": 146,
+        "level": 1,
+        "title": "Functional and Non-Functional Requirements:"
+      },
+      {
+        "line": 148,
+        "level": 2,
+        "title": "Functional Requirements:"
+      },
+      {
+        "line": 150,
+        "level": 3,
+        "title": "1. Customer & Order Management"
+      },
+      {
+        "line": 162,
+        "level": 3,
+        "title": "2. Inventory & Material Management"
+      },
+      {
+        "line": 172,
+        "level": 3,
+        "title": "3. Employee & Labor Management"
+      },
+      {
+        "line": 184,
+        "level": 3,
+        "title": "4. Billing & Payment Management"
+      },
+      {
+        "line": 192,
+        "level": 3,
+        "title": "5. Reports & Analytics"
+      },
+      {
+        "line": 202,
+        "level": 2,
+        "title": "Non-Functional Requirements"
+      },
+      {
+        "line": 204,
+        "level": 3,
+        "title": "1. Performance"
+      },
+      {
+        "line": 210,
+        "level": 3,
+        "title": "2. Reliability"
+      },
+      {
+        "line": 216,
+        "level": 3,
+        "title": "3. Usability"
+      },
+      {
+        "line": 222,
+        "level": 3,
+        "title": "4. Security"
+      },
+      {
+        "line": 232,
+        "level": 3,
+        "title": "5. Maintainability"
+      },
+      {
+        "line": 238,
+        "level": 3,
+        "title": "6. Scalability"
+      },
+      {
+        "line": 242,
+        "level": 1,
+        "title": "Use Case Diagram(s):"
+      },
+      {
+        "line": 244,
+        "level": 1,
+        "title": "Usage Scenarios:"
+      },
+      {
+        "line": 246,
+        "level": 2,
+        "title": "UC01  Register Employee"
+      },
+      {
+        "line": 268,
+        "level": 2,
+        "title": "UC02  Register Customer"
+      },
+      {
+        "line": 289,
+        "level": 2,
+        "title": "UC03  Create Order"
+      },
+      {
+        "line": 310,
+        "level": 2,
+        "title": "UC04  Track Order Status"
+      },
+      {
+        "line": 328,
+        "level": 2,
+        "title": "UC05  Manage Raw Materials"
+      },
+      {
+        "line": 351,
+        "level": 2,
+        "title": "UC06  Assign Worker to Job"
+      },
+      {
+        "line": 372,
+        "level": 2,
+        "title": "UC07  Generate Invoice"
+      },
+      {
+        "line": 392,
+        "level": 2,
+        "title": "UC08  Record Payment"
+      },
+      {
+        "line": 414,
+        "level": 2,
+        "title": "UC09  Track Employee Performance"
+      },
+      {
+        "line": 433,
+        "level": 2,
+        "title": "UC10  Generate Reports & Analytics"
+      },
+      {
+        "line": 453,
+        "level": 2,
+        "title": "UC11  Update Task Progress"
+      },
+      {
+        "line": 475,
+        "level": 2,
+        "title": "UC12  Track Work Hours & Wages"
+      },
+      {
+        "line": 497,
+        "level": 2,
+        "title": "UC13  Auto-Decrease Stock"
+      },
+      {
+        "line": 516,
+        "level": 2,
+        "title": "UC14  Low-Stock Alert"
+      },
+      {
+        "line": 534,
+        "level": 2,
+        "title": "UC15  Generate Cost Estimation"
+      },
+      {
+        "line": 554,
+        "level": 1,
+        "title": "Adopted Methodology"
+      },
+      {
+        "line": 558,
+        "level": 2,
+        "title": "Why This Model?"
+      },
+      {
+        "line": 566,
+        "level": 2,
+        "title": "Phases of the VU Process Model"
+      },
+      {
+        "line": 568,
+        "level": 3,
+        "title": "1. Requirements Phase"
+      },
+      {
+        "line": 572,
+        "level": 3,
+        "title": "2. Planning Phase"
+      },
+      {
+        "line": 576,
+        "level": 3,
+        "title": "3. Risk Analysis Phase"
+      },
+      {
+        "line": 580,
+        "level": 3,
+        "title": "4. Design Phase"
+      },
+      {
+        "line": 584,
+        "level": 3,
+        "title": "5. Development Phase"
+      },
+      {
+        "line": 588,
+        "level": 3,
+        "title": "6. Testing Phase"
+      },
+      {
+        "line": 592,
+        "level": 3,
+        "title": "7. Client Evaluation Phase"
+      },
+      {
+        "line": 598,
+        "level": 3,
+        "title": "8. Acceptance Phase"
+      },
+      {
+        "line": 602,
+        "level": 2,
+        "title": "Reasons for Selecting the VU Process Model"
+      },
+      {
+        "line": 614,
+        "level": 1,
+        "title": "Work Plan (Use MS Project to create Schedule/Work Plan)"
+      }
+    ],
+    "use_cases": [
+      {
+        "id": "UC01",
+        "heading": "UC01  Register Employee",
+        "fields": {
+          "Use Case ID": "UC01",
+          "Title": "Register Employee",
+          "Description": "Admin registers a new employee in the system by providing required details and login credentials.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Admin is logged into the system.",
+          "Post-Condition": "Employee account is created and stored in the system with login credentials.",
+          "Main Flow": "1. Admin opens employee registration form.\n2. Admin enters employee details (name, email, role, employee type, hourly rate).\n3. Admin sets or system generates a password.\n4. Admin submits the form.\n5. System validates input data.\n6. System checks for duplicate email.\n7. System saves employee record.",
+          "Alternative Flow": "A1: Missing or invalid fields  System displays validation error.\nA2: Duplicate email  System shows warning and prevents saving.",
+          "Exceptions": "E1: Database failure  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC02",
+        "heading": "UC02  Register Customer",
+        "fields": {
+          "Use Case ID": "UC02",
+          "Title": "Register Customer",
+          "Description": "Admin registers a new customer with contact details.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Admin is logged into the system.",
+          "Post-Condition": "Customer details are successfully stored in the system.",
+          "Main Flow": "1. Admin opens customer registration form.\n2. Admin enters customer details (name, phone, email, address).\n3. Admin submits the form.\n4. System validates input data.\n5. System checks for duplicate customer (phone/email).\n6. System saves customer record.",
+          "Alternative Flow": "A1: Missing or invalid fields  System displays validation error.\nA2: Duplicate customer detected  System shows warning and prevents saving.",
+          "Exceptions": "E1: Database failure  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC03",
+        "heading": "UC03  Create Order",
+        "fields": {
+          "Use Case ID": "UC03",
+          "Title": "Create Order",
+          "Description": "Admin creates new order for furniture/custom work.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Customer exists in the system.",
+          "Post-Condition": "Order is saved with Pending status.",
+          "Main Flow": "1. Admin selects customer.\n2. Admin enters order details (type, description, quantity).\n3. Admin selects required materials.\n4. System triggers UC15 (Cost Estimation).\n5. System displays estimated cost.\n6. Admin reviews and confirms the order.\n7. System creates the order with Pending status.",
+          "Alternative Flow": "A1: Required materials unavailable  System shows warning and prevents order creation.",
+          "Exceptions": "E1: Stock data missing  System displays error and stops process.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC04",
+        "heading": "UC04  Track Order Status",
+        "fields": {
+          "Use Case ID": "UC04",
+          "Title": "Track Order Status",
+          "Description": "Admin and employee view the current status and progress of an order.",
+          "Actor(s)": "Admin, Employee",
+          "Pre-Condition": "Order exists in the system.",
+          "Post-Condition": "Order status and progress details are displayed.",
+          "Main Flow": "1. User selects an order.\n2. System retrieves order details.\n3. System displays current status (Pending  In Progress  Completed  Delivered).\n4. System displays progress history (if available).",
+          "Alternative Flow": "A1: No progress updates available  System displays current status only.",
+          "Exceptions": "E1: Order not found  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC05",
+        "heading": "UC05  Manage Raw Materials",
+        "fields": {
+          "Use Case ID": "UC05",
+          "Title": "Manage Raw Materials",
+          "Description": "Admin manages inventory items including adding, updating, and deleting raw materials along with their associated details.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Admin is logged into the system.",
+          "Post-Condition": "Material data is successfully updated and stored in the system.",
+          "Main Flow": "1. Admin opens inventory management module.\n2. System displays list of available materials.\n3. Admin adds a new material or selects an existing material.\n4. Admin enters or updates material details (name, quantity, unit price, supplier, threshold level).\n5. Admin confirms the operation (add/update/delete).\n6. System validates input data.\n7. System saves changes to the database.",
+          "Alternative Flow": "A1: Invalid input (e.g., negative quantity, missing required fields)  System displays validation error and prevents saving.\nA2: Duplicate material entry  System shows warning and prevents duplication.",
+          "Exceptions": "E1: Material record not found  System displays error message.\nE2: Database error  System displays error and stops operation.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC06",
+        "heading": "UC06  Assign Worker to Job",
+        "fields": {
+          "Use Case ID": "UC06",
+          "Title": "Assign Worker to Job",
+          "Description": "Admin assigns one or more employees (workers/craftsmen) to a specific order.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Worker exists and is available; order exists in the system.",
+          "Post-Condition": "Worker(s) successfully assigned to the order.",
+          "Main Flow": "1. Admin opens order details.\n2. System displays list of available workers.\n3. Admin selects one or more workers.\n4. Admin confirms assignment.\n5. System validates worker availability.\n6. System assigns worker(s) to the order and saves changes.",
+          "Alternative Flow": "A1: Worker already assigned  System displays warning.\nA2: Selected worker unavailable  System prevents assignment and shows message.",
+          "Exceptions": "E1: Worker record not found  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC07",
+        "heading": "UC07  Generate Invoice",
+        "fields": {
+          "Use Case ID": "UC07",
+          "Title": "Generate Invoice",
+          "Description": "Admin generates an invoice for a completed order.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Order is marked as \"Completed\".",
+          "Post-Condition": "Invoice is successfully created and stored in the system.",
+          "Main Flow": "1. Admin opens completed order.\n2. Admin requests invoice generation.\n3. System retrieves final cost (materials + labor).\n4. System displays invoice details.\n5. Admin reviews and confirms.\n6. System generates and saves the invoice.",
+          "Alternative Flow": "A1: Invoice already generated  System displays warning and prevents duplication.",
+          "Exceptions": "E1: Cost data missing  System displays error message and stops process.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC08",
+        "heading": "UC08  Record Payment",
+        "fields": {
+          "Use Case ID": "UC08",
+          "Title": "Record Payment",
+          "Description": "Admin records partial or full payment for a customer invoice.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Invoice exists in the system.",
+          "Post-Condition": "Payment is recorded and invoice balance is updated.",
+          "Main Flow": "1. Admin opens invoice details.\n2. System displays invoice amount and remaining balance.\n3. Admin clicks Add Payment.\n4. Admin enters payment amount.\n5. System validates payment amount.\n6. System records payment and updates remaining balance.\n7. System displays updated payment status.",
+          "Alternative Flow": "A1: Payment amount exceeds due  System displays error and prevents saving.\nA2: Invalid amount ( 0)  System displays validation error.",
+          "Exceptions": "E1: Database failure  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC09",
+        "heading": "UC09  Track Employee Performance",
+        "fields": {
+          "Use Case ID": "UC09",
+          "Title": "Track Employee Performance",
+          "Description": "Admin reviews performance metrics of employees based on completed tasks and work records.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Employee records and completed task data exist in the system.",
+          "Post-Condition": "Employee performance data is displayed.",
+          "Main Flow": "1. Admin selects an employee.\n2. Admin selects a time range (e.g., monthly or custom).\n3. System retrieves employee task and work history.\n4. System calculates performance metrics (tasks completed, hours worked, efficiency).\n5. System displays performance report.",
+          "Alternative Flow": "A1: No records found  System displays No performance data available.",
+          "Exceptions": "E1: Error in fetching data  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC10",
+        "heading": "UC10  Generate Reports & Analytics",
+        "fields": {
+          "Use Case ID": "UC10",
+          "Title": "Generate Reports & Analytics",
+          "Description": "Admin generates financial and operational reports based on system data.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Relevant data exists in the system.",
+          "Post-Condition": "Report is displayed and optionally exported.",
+          "Main Flow": "1. Admin opens Reports module.\n2. Admin selects report type (financial, material usage, employee performance, order timeline).\n3. Admin selects date range or filters.\n4. System retrieves relevant data.\n5. System generates report.\n6. System displays report and provides export option (e.g., PDF/CSV).",
+          "Alternative Flow": "A1: Invalid date range  System displays validation error and prevents report generation.",
+          "Exceptions": "E1: System timeout or data retrieval error  System displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC11",
+        "heading": "UC11  Update Task Progress",
+        "fields": {
+          "Use Case ID": "UC11",
+          "Title": "Update Task Progress",
+          "Description": "Employee updates the progress status of assigned tasks within an order.",
+          "Actor(s)": "Employee",
+          "Pre-Condition": "Employee is assigned to the order.",
+          "Post-Condition": "Order progress is updated and recorded in the system.",
+          "Main Flow": "1. Employee opens assigned order.\n2. System displays current order status.\n3. Employee selects next progress stage.\n4. Employee submits update.\n5. System validates allowed status transition.\n6. System updates order status and logs progress change.\n7. System displays confirmation of successful update.",
+          "Alternative Flow": "A1: Invalid status transition  System rejects update and displays error.\nA2: Employee selects same status  System shows warning and prevents update.",
+          "Exceptions": "E1: Order not assigned to employee  System denies access and displays error message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC12",
+        "heading": "UC12  Track Work Hours & Wages",
+        "fields": {
+          "Use Case ID": "UC12",
+          "Title": "Track Work Hours & Wages",
+          "Description": "Employee records work hours for assigned tasks, and the system calculates wages based on approved hours.",
+          "Actor(s)": "Employee, Admin",
+          "Pre-Condition": "Employee is assigned to a job.",
+          "Post-Condition": "Work hours are recorded and wages are calculated and updated.",
+          "Main Flow": "1. Employee opens assigned task.\n2. Employee enters work hours.\n3. System validates entered hours.\n4. Admin reviews submitted hours.\n5. Admin approves or modifies hours.\n6. System calculates wages using predefined rates.\n7. System updates wage record and displays confirmation.",
+          "Alternative Flow": "A1: Employee does not enter hours  No update performed.\nA2: Admin rejects hours  System notifies employee and does not update wages.",
+          "Exceptions": "E1: Invalid hours (negative, zero, or excessively large)  System displays validation error.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC13",
+        "heading": "UC13  Auto-Decrease Stock",
+        "fields": {
+          "Use Case ID": "UC13",
+          "Title": "Auto-Decrease Stock",
+          "Description": "System automatically deducts material quantity when materials are assigned during order creation.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Materials are selected and assigned to an order.",
+          "Post-Condition": "Inventory stock levels are updated.",
+          "Main Flow": "1. System receives material assignment from order creation.\n2. System checks availability of required materials.\n3. System validates sufficient stock quantity.\n4. System deducts allocated quantity from inventory.\n5. System updates stock levels in the database.",
+          "Alternative Flow": "A1: Insufficient stock  System displays warning and prevents order confirmation.",
+          "Exceptions": "E1: Database error  System displays error message and stops operation.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC14",
+        "heading": "UC14  Low-Stock Alert",
+        "fields": {
+          "Use Case ID": "UC14",
+          "Title": "Low-Stock Alert",
+          "Description": "System notifies the admin when material stock falls below a defined threshold.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Stock update occurs in the system.",
+          "Post-Condition": "Low-stock notification is generated and displayed to the admin.",
+          "Main Flow": "1. System updates inventory after stock change.\n2. System compares current stock with predefined threshold.\n3. If stock is below threshold, system generates alert.\n4. System displays notification to admin.",
+          "Alternative Flow": "A1: Stock level above threshold  No alert generated.",
+          "Exceptions": "E1: Notification system failure  System logs error and displays message.",
+          "Author": "BC210202812"
+        }
+      },
+      {
+        "id": "UC15",
+        "heading": "UC15  Generate Cost Estimation",
+        "fields": {
+          "Use Case ID": "UC15",
+          "Title": "Generate Cost Estimation",
+          "Description": "System calculates estimated cost of an order based on selected materials and labor charges.",
+          "Actor(s)": "Admin",
+          "Pre-Condition": "Materials and labor details are selected for the order.",
+          "Post-Condition": "Estimated cost is calculated and displayed.",
+          "Main Flow": "1. Admin selects materials and labor details during order creation.\n2. System fetches material prices.\n3. System calculates total material cost.\n4. System calculates labor cost based on predefined rates.\n5. System combines both values to generate total estimated cost.\n6. System displays estimated cost to the admin.",
+          "Alternative Flow": "A1: Required data missing  System displays error and prevents estimation.",
+          "Exceptions": "E1: Data retrieval error  System displays error message.",
+          "Author": "BC210202812"
+        }
+      }
+    ],
+    "text_len": 23750
+  },
+  "design": {
+    "path": "FYP Doc Final\\_extracted\\Design Document Doc.md",
+    "headings": [
+      {
+        "line": 1,
+        "level": 1,
+        "title": "Extracted: Design Document Doc.docx"
+      },
+      {
+        "line": 7,
+        "level": 1,
+        "title": "Version 1.0"
+      },
+      {
+        "line": 9,
+        "level": 1,
+        "title": "Group Id: F25PROJECTEB2A1"
+      },
+      {
+        "line": 11,
+        "level": 1,
+        "title": "Supervisor Name: Abdul Majid Khokhar"
+      },
+      {
+        "line": 65,
+        "level": 1,
+        "title": "Introduction of Design Document"
+      },
+      {
+        "line": 109,
+        "level": 1,
+        "title": "Entity Relationship Diagram (ERD)"
+      },
+      {
+        "line": 111,
+        "level": 1,
+        "title": "Sequence Diagrams"
+      },
+      {
+        "line": 113,
+        "level": 1,
+        "title": "UC01  Register Employee"
+      },
+      {
+        "line": 115,
+        "level": 1,
+        "title": "UC02  Register Customer"
+      },
+      {
+        "line": 117,
+        "level": 1,
+        "title": "UC03  Create Order"
+      },
+      {
+        "line": 119,
+        "level": 1,
+        "title": "UC04  Track Order Status"
+      },
+      {
+        "line": 121,
+        "level": 1,
+        "title": "UC05  Manage Raw Materials"
+      },
+      {
+        "line": 123,
+        "level": 1,
+        "title": "UC06  Assign Worker to Job"
+      },
+      {
+        "line": 125,
+        "level": 1,
+        "title": "UC07  Generate Invoice"
+      },
+      {
+        "line": 127,
+        "level": 1,
+        "title": "UC08  Record Payment"
+      },
+      {
+        "line": 129,
+        "level": 1,
+        "title": "UC09  Track Employee Performance"
+      },
+      {
+        "line": 131,
+        "level": 1,
+        "title": "UC10  Generate Reports"
+      },
+      {
+        "line": 133,
+        "level": 1,
+        "title": "UC11  Update Task Progress"
+      },
+      {
+        "line": 135,
+        "level": 1,
+        "title": "UC12  Track Work Hours & Wages"
+      },
+      {
+        "line": 137,
+        "level": 1,
+        "title": "UC13  Auto Decrease Stock"
+      },
+      {
+        "line": 139,
+        "level": 1,
+        "title": "UC14  Low Stock Alert"
+      },
+      {
+        "line": 141,
+        "level": 1,
+        "title": "UC15  Generate Cost Estimation"
+      },
+      {
+        "line": 143,
+        "level": 1,
+        "title": "Architecture Design Diagram"
+      },
+      {
+        "line": 147,
+        "level": 1,
+        "title": "1. Presentation Layer (Frontend)"
+      },
+      {
+        "line": 171,
+        "level": 1,
+        "title": "2. Application Layer (Backend / Business Logic)"
+      },
+      {
+        "line": 235,
+        "level": 1,
+        "title": "3. Data Layer (Database)"
+      },
+      {
+        "line": 277,
+        "level": 1,
+        "title": "Class Diagram"
+      },
+      {
+        "line": 279,
+        "level": 1,
+        "title": "The class diagram represents the structural design of the Woodcraft Management System. It illustrates the key domain entities, their attributes, and relationships, providing a clear overview of how data is organized and connected within the system."
+      },
+      {
+        "line": 294,
+        "level": 1,
+        "title": "Database Design"
+      }
+    ],
+    "text_len": 9420
+  }
+}

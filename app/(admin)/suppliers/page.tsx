@@ -9,10 +9,10 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/shared/data-s
 import { StatusMessage } from "@/components/shared/status-message";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ConfirmDeleteDialog from "@/features/admin/components/shared/confirm-delete-dialog";
-import PageHeader from "@/features/admin/components/shared/page-header";
-import SearchInput from "@/features/admin/components/shared/search-input";
-import StatCard from "@/features/admin/components/shared/stat-card";
+import ConfirmDeleteDialog from "@/components/shared/confirm-delete-dialog";
+import PageHeader from "@/components/shared/page-header";
+import SearchInput from "@/components/shared/search-input";
+import StatCard from "@/components/shared/stat-card";
 import { useAsyncResource } from "@/hooks/use-async-resource";
 import { ROUTES } from "@/lib/constants/routes";
 import { listSuppliers } from "@/services/admin/admin.service";
@@ -40,9 +40,7 @@ function SuppliersPageContent() {
 
   const stats = useMemo(() => {
     const totalSuppliers = filteredSuppliers.length;
-    const totalMaterials = filteredSuppliers.reduce((sum, supplier) => sum + supplier.materials.length, 0);
-
-    return { totalSuppliers, totalMaterials };
+    return { totalSuppliers };
   }, [filteredSuppliers]);
 
   return (
@@ -67,7 +65,7 @@ function SuppliersPageContent() {
       {!isLoading && error ? (
         <ErrorState
           title="Suppliers could not be loaded"
-          description="The supplier registry is still backed by the mock service layer. Retry to restore the screen state."
+          description={error}
           actionLabel="Retry"
           onAction={reload}
         />
@@ -77,7 +75,6 @@ function SuppliersPageContent() {
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <StatCard label="Total Suppliers" value={stats.totalSuppliers} icon={Layers} color="text-primary" />
-            <StatCard label="Material Coverage" value={stats.totalMaterials} icon={Layers} color="text-sky-600" />
           </div>
 
           <Card className="shadow-sm">
@@ -94,7 +91,7 @@ function SuppliersPageContent() {
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle>All Suppliers</CardTitle>
-              <CardDescription>Supplier master data used across purchasing and restocking workflows</CardDescription>
+              <CardDescription>Supplier master data used across purchasing and replenishment workflows</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {filteredSuppliers.length === 0 ? (
@@ -111,7 +108,7 @@ function SuppliersPageContent() {
                         <th className="p-4 text-[11px] font-bold uppercase">Supplier</th>
                         <th className="p-4 text-[11px] font-bold uppercase">Phone</th>
                         <th className="p-4 text-[11px] font-bold uppercase">Location</th>
-                        <th className="p-4 text-[11px] font-bold uppercase">Materials</th>
+                        <th className="p-4 text-[11px] font-bold uppercase">Email</th>
                         <th className="p-4 text-right text-[11px] font-bold uppercase">Actions</th>
                       </tr>
                     </thead>
@@ -124,7 +121,7 @@ function SuppliersPageContent() {
                           </td>
                           <td className="p-4 whitespace-nowrap">{supplier.phone}</td>
                           <td className="p-4 whitespace-nowrap text-muted-foreground">{supplier.location}</td>
-                          <td className="p-4 whitespace-nowrap">{supplier.materials.length}</td>
+                          <td className="p-4 whitespace-nowrap">{supplier.email || "-"}</td>
                           <td className="p-4 text-right whitespace-nowrap">
                             <div className="flex justify-end gap-2">
                               <Link href={ROUTES.suppliers.detail(supplier.id)}>

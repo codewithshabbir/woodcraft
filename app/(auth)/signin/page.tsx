@@ -2,37 +2,39 @@
 
 import { Suspense, useState } from "react";
 import { Mail, Lock } from "lucide-react";
+import Link from "next/link";
 import { PrimaryButton } from "@/components/shared/PrimaryButton";
 import { StatusMessage } from "@/components/shared/status-message";
-import Link from "next/link";
 import { Form } from "@/components/ui/form";
 import { PrimaryFormField } from "@/components/shared/PrimaryFormField";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SignInFormValues, signInSchema } from "@/lib/schemas/signin.schema";
+import { signInSchema } from "@/lib/schemas/signin.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/lib/constants/routes";
 import { signIn } from "@/services/auth/auth.service";
+import type { SignInValues } from "@/types/api/auth";
 
 function SignInPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
+  const callbackUrl = searchParams.get("callbackUrl");
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const form = useForm<SignInFormValues>({
+  const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const handleSignInSubmit = async (values: SignInFormValues) => {
+  const handleSignInSubmit = async (values: SignInValues) => {
     setLoading(true);
     setSubmitError(null);
 
     try {
       await signIn(values);
-      router.push(`${ROUTES.dashboard.overview}?message=${encodeURIComponent("Signed in successfully.")}`);
+      router.push(callbackUrl || `${ROUTES.dashboard.overview}?message=${encodeURIComponent("Signed in successfully.")}`);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Sign in failed.");
     } finally {
@@ -62,10 +64,6 @@ function SignInPageContent() {
           <PrimaryButton type="submit" className="h-11 w-full text-base" isLoading={loading}>Sign In</PrimaryButton>
         </form>
       </Form>
-
-      <div className="h-px bg-border" />
-
-      <p className="text-center text-sm text-muted-foreground">Don&apos;t have an account? <Link href={ROUTES.auth.signup} className="font-medium text-primary hover:underline">Create one</Link></p>
     </div>
   );
 }

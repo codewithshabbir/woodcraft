@@ -1,0 +1,258 @@
+﻿D:\a desktop projects\woodcraft\.codex-dev.err
+D:\a desktop projects\woodcraft\.codex-dev.out
+D:\a desktop projects\woodcraft\.codex-dev2.err
+D:\a desktop projects\woodcraft\.codex-dev2.out
+D:\a desktop projects\woodcraft\.codex-nextdev.err
+D:\a desktop projects\woodcraft\.codex-nextdev.out
+D:\a desktop projects\woodcraft\.codex-start.err
+D:\a desktop projects\woodcraft\.codex-start.out
+D:\a desktop projects\woodcraft\.env.local
+D:\a desktop projects\woodcraft\.gitignore
+D:\a desktop projects\woodcraft\app\(admin)\billing\invoices\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\billing\invoices\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\billing\payments\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\customers\[id]\edit\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\customers\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\customers\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\customers\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\dashboard\analytics\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\dashboard\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\employees\[id]\edit\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\employees\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\employees\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\employees\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\employees\work-hours\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\estimation\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\expenses\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\expenses\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\inventory\quantity-levels\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\inventory\raw-materials\[id]\edit\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\inventory\raw-materials\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\inventory\raw-materials\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\inventory\raw-materials\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\layout.tsx
+D:\a desktop projects\woodcraft\app\(admin)\orders\[id]\edit\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\orders\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\orders\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\orders\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\orders\progress\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\reports\employees\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\reports\inventory\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\reports\sales\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\reports\timelines\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\suppliers\[id]\edit\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\suppliers\[id]\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\suppliers\new\page.tsx
+D:\a desktop projects\woodcraft\app\(admin)\suppliers\page.tsx
+D:\a desktop projects\woodcraft\app\(auth)\forgot-password\page.tsx
+D:\a desktop projects\woodcraft\app\(auth)\layout.tsx
+D:\a desktop projects\woodcraft\app\(auth)\signin\page.tsx
+D:\a desktop projects\woodcraft\app\api\auth\[...nextauth]\route.js
+D:\a desktop projects\woodcraft\app\api\auth\profile\route.js
+D:\a desktop projects\woodcraft\app\api\auth\register\route.js
+D:\a desktop projects\woodcraft\app\api\cost-estimation\route.js
+D:\a desktop projects\woodcraft\app\api\customers\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\customers\route.js
+D:\a desktop projects\woodcraft\app\api\dashboard\analytics\route.js
+D:\a desktop projects\woodcraft\app\api\dashboard\summary\route.js
+D:\a desktop projects\woodcraft\app\api\employees\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\employees\route.js
+D:\a desktop projects\woodcraft\app\api\expenses\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\expenses\route.js
+D:\a desktop projects\woodcraft\app\api\invoices\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\invoices\route.js
+D:\a desktop projects\woodcraft\app\api\materials\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\materials\route.js
+D:\a desktop projects\woodcraft\app\api\notifications\route.js
+D:\a desktop projects\woodcraft\app\api\orders\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\orders\route.js
+D:\a desktop projects\woodcraft\app\api\payments\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\payments\route.js
+D:\a desktop projects\woodcraft\app\api\reports\employees\route.js
+D:\a desktop projects\woodcraft\app\api\reports\inventory\route.js
+D:\a desktop projects\woodcraft\app\api\reports\route.js
+D:\a desktop projects\woodcraft\app\api\reports\sales\route.js
+D:\a desktop projects\woodcraft\app\api\reports\timelines\route.js
+D:\a desktop projects\woodcraft\app\api\suppliers\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\suppliers\route.js
+D:\a desktop projects\woodcraft\app\api\work-logs\[id]\route.js
+D:\a desktop projects\woodcraft\app\api\work-logs\route.js
+D:\a desktop projects\woodcraft\app\favicon.ico
+D:\a desktop projects\woodcraft\app\globals.css
+D:\a desktop projects\woodcraft\app\layout.tsx
+D:\a desktop projects\woodcraft\app\login\page.js
+D:\a desktop projects\woodcraft\app\page.tsx
+D:\a desktop projects\woodcraft\COMPLETE_FYP_DOC_ANALYSIS.md
+D:\a desktop projects\woodcraft\components.json
+D:\a desktop projects\woodcraft\components\layout\AdminShell.jsx
+D:\a desktop projects\woodcraft\components\layout\AdminShellClientOnly.tsx
+D:\a desktop projects\woodcraft\components\layout\AppSidebar.tsx
+D:\a desktop projects\woodcraft\components\layout\LogoutButton.tsx
+D:\a desktop projects\woodcraft\components\layout\NotificationDropdown.tsx
+D:\a desktop projects\woodcraft\components\layout\TopBar.tsx
+D:\a desktop projects\woodcraft\components\layout\UserDropdown.tsx
+D:\a desktop projects\woodcraft\components\shared\confirm-delete-dialog.tsx
+D:\a desktop projects\woodcraft\components\shared\data-state.tsx
+D:\a desktop projects\woodcraft\components\shared\info-pair.tsx
+D:\a desktop projects\woodcraft\components\shared\page-header.tsx
+D:\a desktop projects\woodcraft\components\shared\PrimaryButton.tsx
+D:\a desktop projects\woodcraft\components\shared\PrimaryFormField.tsx
+D:\a desktop projects\woodcraft\components\shared\search-input.tsx
+D:\a desktop projects\woodcraft\components\shared\stat-card.tsx
+D:\a desktop projects\woodcraft\components\shared\status-badge.tsx
+D:\a desktop projects\woodcraft\components\shared\status-message.tsx
+D:\a desktop projects\woodcraft\components\ui\alert-dialog.tsx
+D:\a desktop projects\woodcraft\components\ui\avatar.tsx
+D:\a desktop projects\woodcraft\components\ui\button.tsx
+D:\a desktop projects\woodcraft\components\ui\card.tsx
+D:\a desktop projects\woodcraft\components\ui\collapsible.tsx
+D:\a desktop projects\woodcraft\components\ui\dropdown-menu.tsx
+D:\a desktop projects\woodcraft\components\ui\form.tsx
+D:\a desktop projects\woodcraft\components\ui\input.tsx
+D:\a desktop projects\woodcraft\components\ui\label.tsx
+D:\a desktop projects\woodcraft\components\ui\progress.tsx
+D:\a desktop projects\woodcraft\components\ui\separator.tsx
+D:\a desktop projects\woodcraft\components\ui\sheet.tsx
+D:\a desktop projects\woodcraft\components\ui\sidebar.tsx
+D:\a desktop projects\woodcraft\components\ui\skeleton.tsx
+D:\a desktop projects\woodcraft\components\ui\tooltip.tsx
+D:\a desktop projects\woodcraft\docs\smoke-test.md
+D:\a desktop projects\woodcraft\eslint.config.mjs
+D:\a desktop projects\woodcraft\features\billing\invoices-table.tsx
+D:\a desktop projects\woodcraft\features\employees\employees-table.tsx
+D:\a desktop projects\woodcraft\features\estimation\estimation-form.tsx
+D:\a desktop projects\woodcraft\features\orders\employee-progress-panel.tsx
+D:\a desktop projects\woodcraft\features\orders\order-assignment-panel.tsx
+D:\a desktop projects\woodcraft\features\orders\order-customer-section.tsx
+D:\a desktop projects\woodcraft\features\orders\order-form.schema.ts
+D:\a desktop projects\woodcraft\features\orders\order-form.tsx
+D:\a desktop projects\woodcraft\features\orders\order-items-section.tsx
+D:\a desktop projects\woodcraft\features\orders\order-notes-section.tsx
+D:\a desktop projects\woodcraft\features\orders\order-status-section.tsx
+D:\a desktop projects\woodcraft\features\orders\use-order-form.ts
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\analysis_data.json
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc.md
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image1.png
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image10.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image11.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image12.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image13.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image14.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image15.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image16.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image17.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image18.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image19.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image2.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image20.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image3.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image4.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image5.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image6.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image7.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image8.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Design Document Doc_media\image9.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Project Doc.md
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Software Requirements Specification Doc.md
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Software Requirements Specification Doc_media\image1.png
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Software Requirements Specification Doc_media\image2.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Software Requirements Specification Doc_media\image3.png
+D:\a desktop projects\woodcraft\FYP Doc Final\_extracted\Software Requirements Specification Doc_media\image4.jpeg
+D:\a desktop projects\woodcraft\FYP Doc Final\Design Document Doc.docx
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\Architecture Design Diagram.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\Class Diagram.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\Database Design.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\Entity Relationship Diagram.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC01 — Register Employee.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC02 — Register Customer.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC03 — Create Order.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC04 — Track Order Status.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC05 — Manage Raw Materials.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC06 — Assign Worker to Job.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC07 — Generate Invoice.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC08 — Record Payment.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC09 — Track Employee Performance.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC10 — Generate Reports.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC11 — Update Task Progress.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC12 — Track Work Hours & Wages.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC13 — Auto Decrease Stock.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC14 — Low Stock Alert.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\UC15 — Generate Cost Estimation.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Images\Use Case Diagram.jpg
+D:\a desktop projects\woodcraft\FYP Doc Final\Project Doc.docx
+D:\a desktop projects\woodcraft\FYP Doc Final\Software Requirements Specification Doc.docx
+D:\a desktop projects\woodcraft\fyp-doc-analysis.md
+D:\a desktop projects\woodcraft\hooks\use-async-resource.ts
+D:\a desktop projects\woodcraft\hooks\use-mobile.ts
+D:\a desktop projects\woodcraft\lib\api\admin-routes.js
+D:\a desktop projects\woodcraft\lib\api\observability.js
+D:\a desktop projects\woodcraft\lib\api\request.js
+D:\a desktop projects\woodcraft\lib\api\response.js
+D:\a desktop projects\woodcraft\lib\auth.js
+D:\a desktop projects\woodcraft\lib\client\api.ts
+D:\a desktop projects\woodcraft\lib\constants\routes.ts
+D:\a desktop projects\woodcraft\lib\format.ts
+D:\a desktop projects\woodcraft\lib\helpers\cn.ts
+D:\a desktop projects\woodcraft\lib\helpers\date.ts
+D:\a desktop projects\woodcraft\lib\helpers\index.ts
+D:\a desktop projects\woodcraft\lib\models\Customer.js
+D:\a desktop projects\woodcraft\lib\models\Expense.js
+D:\a desktop projects\woodcraft\lib\models\Invoice.js
+D:\a desktop projects\woodcraft\lib\models\Material.js
+D:\a desktop projects\woodcraft\lib\models\Order.js
+D:\a desktop projects\woodcraft\lib\models\Payment.js
+D:\a desktop projects\woodcraft\lib\models\StockLog.js
+D:\a desktop projects\woodcraft\lib\models\Supplier.js
+D:\a desktop projects\woodcraft\lib\models\User.js
+D:\a desktop projects\woodcraft\lib\models\WorkLog.js
+D:\a desktop projects\woodcraft\lib\mongodb.js
+D:\a desktop projects\woodcraft\lib\schemas\forgotpassword.schema.ts
+D:\a desktop projects\woodcraft\lib\schemas\signin.schema.ts
+D:\a desktop projects\woodcraft\lib\server\admin-data.js
+D:\a desktop projects\woodcraft\lib\server\bootstrap.js
+D:\a desktop projects\woodcraft\lib\server\invariants.js
+D:\a desktop projects\woodcraft\lib\sidebarConfig.ts
+D:\a desktop projects\woodcraft\lib\validations\entities.js
+D:\a desktop projects\woodcraft\middleware.js
+D:\a desktop projects\woodcraft\next.config.ts
+D:\a desktop projects\woodcraft\next-env.d.ts
+D:\a desktop projects\woodcraft\package.json
+D:\a desktop projects\woodcraft\package-lock.json
+D:\a desktop projects\woodcraft\postcss.config.mjs
+D:\a desktop projects\woodcraft\public\file.svg
+D:\a desktop projects\woodcraft\public\globe.svg
+D:\a desktop projects\woodcraft\public\next.svg
+D:\a desktop projects\woodcraft\public\vercel.svg
+D:\a desktop projects\woodcraft\public\window.svg
+D:\a desktop projects\woodcraft\README.md
+D:\a desktop projects\woodcraft\scripts\alias-loader.mjs
+D:\a desktop projects\woodcraft\scripts\check-mongo.cjs
+D:\a desktop projects\woodcraft\scripts\dev.cjs
+D:\a desktop projects\woodcraft\scripts\migrate-invoices-uc06.mjs
+D:\a desktop projects\woodcraft\scripts\postinstall.cjs
+D:\a desktop projects\woodcraft\scripts\repair-invoice.mjs
+D:\a desktop projects\woodcraft\scripts\seed-db.mjs
+D:\a desktop projects\woodcraft\scripts\validate-ucs.cjs
+D:\a desktop projects\woodcraft\services\admin\admin.service.ts
+D:\a desktop projects\woodcraft\services\auth\auth.service.ts
+D:\a desktop projects\woodcraft\services\auth\profile.service.ts
+D:\a desktop projects\woodcraft\services\dashboard\dashboard.service.ts
+D:\a desktop projects\woodcraft\services\notifications\notifications.service.ts
+D:\a desktop projects\woodcraft\services\reports\report.service.ts
+D:\a desktop projects\woodcraft\tsconfig.json
+D:\a desktop projects\woodcraft\tsconfig.tsbuildinfo
+D:\a desktop projects\woodcraft\types\api\admin.ts
+D:\a desktop projects\woodcraft\types\api\auth.ts
+D:\a desktop projects\woodcraft\types\api\dashboard.ts
+D:\a desktop projects\woodcraft\types\api\reports.ts
+D:\a desktop projects\woodcraft\types\entities\admin.ts
+D:\a desktop projects\woodcraft\types\entities\dashboard.ts
+D:\a desktop projects\woodcraft\types\entities\notifications.ts
+D:\a desktop projects\woodcraft\types\next-auth.d.ts
+D:\a desktop projects\woodcraft\types\shared\type-utils.ts
+D:\a desktop projects\woodcraft\types\ui\button.ts
+D:\a desktop projects\woodcraft\types\ui\form.ts
+D:\a desktop projects\woodcraft\types\ui\forms\estimation.ts
+D:\a desktop projects\woodcraft\types\ui\forms\order.ts
+D:\a desktop projects\woodcraft\types\ui\layout.ts
+D:\a desktop projects\woodcraft\types\ui\sidebar.ts

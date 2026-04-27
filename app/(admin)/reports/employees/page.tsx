@@ -1,24 +1,24 @@
 "use client";
 
-import { Award, Briefcase, Clock3, TrendingUp } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Award, Clock3 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-
-const performance = [
-  { name: "Ali Raza", role: "Senior Carpenter", score: 94, jobs: 12, hours: 188 },
-  { name: "Sajid Iqbal", role: "Finishing Worker", score: 86, jobs: 10, hours: 164 },
-  { name: "Usman Tariq", role: "Installer", score: 78, jobs: 6, hours: 122 },
-];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PrimaryButton } from "@/components/shared/PrimaryButton";
+import { ErrorState, LoadingState } from "@/components/shared/data-state";
+import { cn } from "@/lib/helpers";
+import { useAsyncResource } from "@/hooks/use-async-resource";
+import { getEmployeeReport } from "@/services/reports/report.service";
 
 export default function EmployeeReportPage() {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const loadReport = useCallback(() => getEmployeeReport({ startDate: startDate || undefined, endDate: endDate || undefined }), [endDate, startDate]);
+  const { data, error, isLoading, reload } = useAsyncResource({ loader: loadReport });
+
+  if (isLoading) return <LoadingState title="Loading employee report..." />;
+  if (error || !data) return <ErrorState title="Employee report could not be loaded" description={error || "No report data returned."} actionLabel="Retry" onAction={reload} />;
+
   return (
     <div className="space-y-8">
       <div>
@@ -28,12 +28,22 @@ export default function EmployeeReportPage() {
         </p>
       </div>
 
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4 md:flex-row md:items-end">
+        <label className="flex-1 text-sm">
+          <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Start Date</span>
+          <input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} className="h-10 w-full rounded-md border border-border bg-background px-3 outline-none" />
+        </label>
+        <label className="flex-1 text-sm">
+          <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">End Date</span>
+          <input type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} className="h-10 w-full rounded-md border border-border bg-background px-3 outline-none" />
+        </label>
+        <PrimaryButton className="h-10 px-4" onClick={() => reload()}>Apply Filter</PrimaryButton>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Avg Productivity", val: "86%", icon: TrendingUp, color: "text-primary" },
-          { label: "Top Performer", val: "Ali Raza", icon: Award, color: "text-emerald-600" },
-          { label: "Open Assignments", val: 9, icon: Briefcase, color: "text-sky-600" },
-          { label: "Total Work Hours", val: 474, icon: Clock3, color: "text-amber-600" },
+          { label: "Top Performer", val: data.summary.topPerformer, icon: Award, color: "text-emerald-600" },
+          { label: "Total Work Hours", val: data.summary.totalWorkHours, icon: Clock3, color: "text-amber-600" },
         ].map((item) => (
           <Card key={item.label} className="rounded-xl border border-border shadow-sm hover:shadow-md transition">
             <CardContent className="flex items-center justify-between p-5">
@@ -50,10 +60,10 @@ export default function EmployeeReportPage() {
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Performance Breakdown</CardTitle>
-          <CardDescription>Efficiency score based on workload, hours, and task completion</CardDescription>
+          <CardDescription>Approved hours and assigned jobs per employee.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {performance.map((employee) => (
+          {data.performance.map((employee) => (
             <div key={employee.name} className="rounded-xl border border-border bg-muted/20 p-4">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
@@ -63,10 +73,8 @@ export default function EmployeeReportPage() {
                 <div className="flex flex-wrap gap-4 text-sm">
                   <span className="text-muted-foreground">Jobs: <span className="font-semibold text-foreground">{employee.jobs}</span></span>
                   <span className="text-muted-foreground">Hours: <span className="font-semibold text-foreground">{employee.hours}</span></span>
-                  <span className="text-muted-foreground">Score: <span className="font-semibold text-primary">{employee.score}%</span></span>
                 </div>
               </div>
-              <div className="mt-4"><Progress value={employee.score} className="h-2" /></div>
             </div>
           ))}
         </CardContent>
