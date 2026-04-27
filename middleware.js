@@ -36,11 +36,12 @@ const employeeAllowedPrefixes = [
 const authPrefixes = ["/login", "/signin"];
 
 export async function middleware(request) {
+  const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
   let token = null;
   try {
     token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+      secret: authSecret,
     });
   } catch {
     token = null;
@@ -59,10 +60,19 @@ export async function middleware(request) {
 
   if (isAdminRoute && !token) {
     if (isApiRoute) {
+      if (!authSecret) {
+        return NextResponse.json(
+          { ok: false, error: { code: "SERVER_MISCONFIGURED", message: "Auth secret is not configured.", fields: {} } },
+          { status: 500 },
+        );
+      }
       return NextResponse.json(
         { ok: false, error: { code: "UNAUTHORIZED", message: "Unauthorized.", fields: {} } },
         { status: 401 },
       );
+    }
+    if (!authSecret) {
+      return new NextResponse("Server misconfigured: missing AUTH_SECRET.", { status: 500 });
     }
     const url = new URL("/signin", request.url);
     url.searchParams.set("callbackUrl", `${pathname}${search}`);
