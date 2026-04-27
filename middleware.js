@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { decode, getToken } from "next-auth/jwt";
+import { getToken } from "@auth/core/jwt";
 
 const adminPrefixes = [
   "/dashboard",
@@ -39,8 +39,8 @@ export async function middleware(request) {
   const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
   let token = null;
   try {
-    // NextAuth v5 (Auth.js) uses authjs.* cookie names. Vercel middleware runs on Edge,
-    // so avoid importing server-only NextAuth handlers here and decode the JWT directly.
+    // Auth.js (NextAuth v5) uses `authjs.*` cookie names. Middleware runs on Edge,
+    // so decode via `@auth/core/jwt` using the correct cookieName+salt behavior.
     const cookieCandidates = [
       "__Secure-authjs.session-token",
       "__Host-authjs.session-token",
@@ -51,16 +51,14 @@ export async function middleware(request) {
     ];
 
     for (const cookieName of cookieCandidates) {
-      const cookieValue = request.cookies.get(cookieName)?.value;
-      if (!cookieValue) continue;
-
-      token = await decode({ token: cookieValue, secret: authSecret });
+      token = await getToken({
+        req: request,
+        secret: authSecret,
+        cookieName,
+        // Ensure secure cookie parsing behaves on https deployments.
+        secureCookie: request.nextUrl.protocol === "https:",
+      });
       if (token) break;
-    }
-
-    // Fallback to getToken's internal cookie lookup (covers older cookie naming).
-    if (!token) {
-      token = await getToken({ req: request, secret: authSecret });
     }
   } catch {
     token = null;
